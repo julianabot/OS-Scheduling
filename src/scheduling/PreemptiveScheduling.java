@@ -1,4 +1,4 @@
-package javaapplication6;
+package scheduling;
 
 import java.util.Scanner;
 import java.util.ArrayList;
