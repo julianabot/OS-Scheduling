@@ -1,13 +1,21 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package scheduling;
 
 import java.util.*;
 import java.util.Scanner;
 import java.util.Vector;
 
-class Node { //sstf code
+/**
+ *
+ * @author Monica Mendiola
+ */
+class node { //sstf code
 
-    // represent difference between
-    // head position and track number
+    // represent difference between head position and track number
     int distance = 0;
 
     // true if track has been accessed
@@ -16,9 +24,8 @@ class Node { //sstf code
 
 public class DiskScheduling {
 
-//SSTF==================================================================
-    static void calculateDifference(int queue[],
-            int head, Node diff[]) {
+//SSTF==========================================================================
+    static void calculateDifference(int queue[], int head, node diff[]) {
         for (int i = 0; i < diff.length; i++) {
             diff[i].distance = Math.abs(queue[i] - head);
         }
@@ -26,7 +33,7 @@ public class DiskScheduling {
 
     // find unaccessed track
     // which is at minimum distance from head
-    public static int findMin(Node diff[]) {
+    public static int findMin(node diff[]) {
         int index = -1, minimum = Integer.MAX_VALUE;
 
         for (int i = 0; i < diff.length; i++) {
@@ -44,12 +51,12 @@ public class DiskScheduling {
             return;
         }
 
-        // create array of objects of class Node   
-        Node diff[] = new Node[request.length];
+        // create array of objects of class node   
+        node diff[] = new node[request.length];
 
         // initialize array
         for (int i = 0; i < diff.length; i++) {
-            diff[i] = new Node();
+            diff[i] = new node();
         }
 
         // count total number of seek operation   
@@ -78,21 +85,22 @@ public class DiskScheduling {
         seek_sequence[seek_sequence.length - 1] = head;
 
         double seek_time = (double) seek_count / (seek_sequence.length - 1);
-
+        
+        System.out.println("============================================");
         System.out.println("Total head movement: " + seek_count);
         System.out.println("Seek Time: " + seek_time);
 
         System.out.println("Seek Sequence is");
-
-        // print the sequence
         for (int i = 0; i < seek_sequence.length; i++) {
             System.out.print(seek_sequence[i] + " ");
         }
         System.out.println(" ");
+        System.out.println("============================================");
+        System.out.println(" ");
     }
 
-//=======================================================================================
-//FCFS===============================================================================
+//==============================================================================
+//FCFS==========================================================================
     static void aFCFS(int arr[], int pos, int size) {
         int seek_count = 0;
         int distance, cur_track;
@@ -111,21 +119,22 @@ public class DiskScheduling {
         }
 
         double seek_time = (double) seek_count / size;
-
+           
+        System.out.println("============================================");
         System.out.println("Total head movement: " + seek_count);
         System.out.println("Seek Time: " + seek_time);
 
-        // Seek sequence would be the same as request array sequence
         System.out.println("Seek Sequence is");
-
         for (int i = 0; i < size; i++) {
             System.out.print(arr[i] + " ");
         }
         System.out.println(" ");
+        System.out.println("============================================");
+        System.out.println(" ");
     }
 
 //==============================================================================
-//cscan==========================================================================
+//cscan=========================================================================
     static void aCSCAN(int arr[], int head, int size, int disk_size) {
         int seek_count = 0;
         int distance, cur_track;
@@ -204,21 +213,22 @@ public class DiskScheduling {
         }
 
         double seek_time = (double) seek_count / size;
-
+         
+        System.out.println("============================================");
         System.out.println("Total head movement: " + seek_count);
         System.out.println("Seek Time: " + seek_time);
-        System.out.println(size);
 
         System.out.println("Seek Sequence is");
-
         for (int i = 0; i < seek_sequence.size(); i++) {
             System.out.print(seek_sequence.get(i) + " ");
         }
         System.out.println(" ");
+        System.out.println("============================================");
+        System.out.println(" ");
     }
 
-//=============================================================================
-//clook========================================================================
+//==============================================================================
+//clook=========================================================================
     static void aCLOOK(int arr[], int head, int size, int disk_size) {
         int seek_count = 0;
         int distance, cur_track;
@@ -292,18 +302,19 @@ public class DiskScheduling {
 
         double seek_time = (double) seek_count / size;
 
+        System.out.println("============================================");
         System.out.println("Total head movement: " + seek_count);
         System.out.println("Seek Time: " + seek_time);
-        System.out.println(size);
 
         System.out.println("Seek Sequence is");
-
         for (int i = 0; i < seek_sequence.size(); i++) {
             System.out.print(seek_sequence.get(i) + " ");
         }
         System.out.println(" ");
+        System.out.println("============================================");
+        System.out.println(" ");
     }
-//============================================================================
+//==============================================================================
 
 // Driver code
     public static void main(String[] args) {
@@ -343,7 +354,7 @@ public class DiskScheduling {
                 System.out.println("[C] CSCAN");
                 System.out.println("[D] CLOOK");
                 System.out.println("[E] EXIT");
-                System.out.print("\nCHOICE: ");
+                System.out.print("CHOICE: ");
                 char inputAlgo = sc.next().charAt(0);
                 chosenAlgo = Character.toUpperCase(inputAlgo);
 
