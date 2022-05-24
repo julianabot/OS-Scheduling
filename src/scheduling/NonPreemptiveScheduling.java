@@ -10,8 +10,9 @@ public class NonPreemptiveScheduling {
 
     public void display_menu() {
         System.out.println("Non-Preemptive Scheduling Algorithms");
-        System.out.println("[A] SJF");
-        System.out.println("[B] FCFS");
+        System.out.println("[A] Shortest Job First (SJF)");
+        System.out.println("[B] First Come First Serve (FCFS)");
+        System.out.println("[C] Exit");
         System.out.print("Compute for: ");
     }
 
@@ -19,13 +20,33 @@ public class NonPreemptiveScheduling {
         Scanner sc = new Scanner(System.in);
         char chooseContinue;
         char chosenAlgo;
-
+        String gantt = "";
+        int n;
         do {
             display_menu();
             chosenAlgo = sc.next().charAt(0);
+            System.out.println("------------------------------------------------------------");
+            switch (chosenAlgo) {
+                case 'A':
+                    System.out.println("Shortest Job First (SJF)");
+                    break;
+                case 'B':
+                    System.out.println("First Come First Serve (FCSF)");
+                    break;
+            }
+            if (chosenAlgo == 'C') {
+                System.out.println("End of program.");
+                break;
+            }
 
-            System.out.println("Input no. of processes [2-9]: ");
-            int n = sc.nextInt();
+            do {
+                System.out.print("Input no. of processes [2-9]: ");
+                n = sc.nextInt();
+                if (n > 9 || n < 2) {
+                    System.out.println("Invalid value. Please choose a number between 2 and 9");
+                }
+            } while (n > 9 || n < 2);
+
             int pid[] = new int[n];
             int at[] = new int[n];
             int bt[] = new int[n];
@@ -59,7 +80,6 @@ public class NonPreemptiveScheduling {
                             break;
                         }
                         for (int i = 0; i < n; i++) {
-
                             if ((at[i] <= st) && (f[i] == 0) && (bt[i] < min)) {
                                 min = bt[i];
                                 c = i;
@@ -87,14 +107,18 @@ public class NonPreemptiveScheduling {
                     for (int i = 0; i < n; i++) {
                         avgwt += wt[i];
                         avgta += ta[i];
-                        System.out.println(" " + pid[i] + "\t\t" + at[i] + "\t\t" + bt[i] + "\t\t" + ta[i] + "\t\t" + wt[i]);
+                        System.out.println(" P" + pid[i] + "\t\t" + at[i] + "\t\t" + bt[i] + "\t\t" + ta[i] + "\t\t" + wt[i]);
                     }
                     System.out.println("Average waiting time = " + (float) (avgwt / n));
 
                     System.out.println("Average turn around time = " + (float) (avgta / n));
-//                    for (int i = 0; i < n; i++) {
-//                        System.out.println(pid[i] + " ");
-//                    }
+
+                    for (int i = 0; i < n; i++) {
+                        gantt = gantt + "P" + pid[i] + ", ";
+                    }
+                    gantt = gantt.substring(0, gantt.length() - 2);
+                    System.out.println("Gantt Chart: " + gantt);
+                    gantt = "";
                     break;
                 case 'B':
                     int temp;
@@ -142,23 +166,28 @@ public class NonPreemptiveScheduling {
 
                     for (int i = 0; i < n; i++) {
                         //System.out.println("P" + pid[i] + "\t" + wt[i]);
-                        System.out.println(" " + pid[i] + "\t\t" + at[i] + "\t\t" + bt[i] + "\t\t" + ta[i] + "\t\t" + wt[i]);
+                        System.out.println(" P" + pid[i] + "\t\t" + at[i] + "\t\t" + bt[i] + "\t\t" + ta[i] + "\t\t" + wt[i]);
                     }
-//                    System.out.println("\n   Turnaround time");
-//                    for (int i = 0; i < n; i++) {
-//                        System.out.println("P" + pid[i] + "\t" + ta[i]);
-//                    }
-                    System.out.println("\nAverage Waiting Time: " + (avgwt / n));     // printing average waiting time.
-                    System.out.println("Average Turnaround Time: " + (avgta / n));    // printing average turnaround time.
+                    System.out.println("Average Waiting Time: " + (float) (avgwt / n));     // printing average waiting time.
+                    System.out.println("Average Turnaround Time: " + (float) (avgta / n));    // printing average turnaround time.
+
+                    for (int i = 0; i < n; i++) {
+                        gantt = gantt + "P" + pid[i] + ", ";
+                    }
+                    gantt = gantt.substring(0, gantt.length() - 2);
+                    System.out.println("Gantt Chart: " + gantt);
+                    gantt = "";
+                    break;
+                case 'C':
+                    System.out.println("End of program");
                     break;
                 default:
                     System.err.println("Unrecognized option");
                     break;
             }
+            System.out.print("Input again? (Y/N): ");
 
-            System.out.println("Input again? (Y/N): ");
             chooseContinue = Character.toUpperCase(sc.next().charAt(0));
-
         } while (chooseContinue != 'N');
 
     }

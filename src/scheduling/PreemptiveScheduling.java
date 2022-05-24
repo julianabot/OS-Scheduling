@@ -29,60 +29,74 @@ public class PreemptiveScheduling {
         ArrayList<Integer> burstTime = new ArrayList<>();
         char chosenAlgo;
         char chooseContinue;
+        char inputAlgo;
 
         do {
-            //Code block for accepting a input number for processes
-            do {
-                System.out.print("Input no. of processes [2-9]: ");
-                processNum = keyboard.nextInt();
-
-                if (processNum > 9 || processNum < 2) {
-                    System.out.println("Invalid Value. Please choose a number between 2 and 9.");
-                }
-            } while (processNum > 9 || processNum < 2);
-
-            //Accepting the arrival time input
-            for (int i = 1; i <= processNum; i++) {
-                System.out.print("AT" + i + ": ");
-                int inputArrival = keyboard.nextInt();
-                arrivalTime.add(inputArrival);
-            }
-
-            //Accepting burst time input
-            for (int i = 1; i <= processNum; i++) {
-                System.out.print("BT" + i + ": ");
-                int inputBurst = keyboard.nextInt();
-                burstTime.add(inputBurst);
-            }
-
-            //puts the input into the array to be used in the computation of SJF
-            Process proc[] = {};
-            for (int i = 1; i <= processNum; i++) {
-                proc = Arrays.copyOf(proc, proc.length + 1);
-                proc[proc.length - 1] = new Process(i, burstTime.get(i - 1), arrivalTime.get(i - 1));
-            }
-
-            //puts the input into the necessary objects to be used in the computation of RR
-            int quantum;
-            int processes[] = {};
-            int burstTimeInput[] = {};
-            for (int i = 1; i <= processNum; i++) {
-                processes = Arrays.copyOf(processes, processes.length + 1);
-                processes[processes.length - 1] = i;
-            }
-            for (int i = 1; i <= processNum; i++) {
-                burstTimeInput = Arrays.copyOf(burstTimeInput, burstTimeInput.length + 1);
-                burstTimeInput[burstTimeInput.length - 1] = burstTime.get(i - 1);
-            }
-
             do {
                 System.out.println("Preemptive Scheduling Algorithms");
                 System.out.println("[A] Shortest Job First (SJF)");
                 System.out.println("[B] Round Robin (RR)");
-                System.out.println("[C] Exit Program");
+                System.out.println("[C] Exit");
                 System.out.print("Compute for: ");
-                char inputAlgo = keyboard.next().charAt(0);
+                inputAlgo = keyboard.next().charAt(0);
                 chosenAlgo = Character.toUpperCase(inputAlgo);
+
+                System.out.println("------------------------------------------------------------");
+                switch (chosenAlgo) {
+                    case 'A':
+                        System.out.println("Shortest Job First (SJF)");
+                        break;
+                    case 'B':
+                        System.out.println("Round Robin (RR)");
+                        break;
+                }
+                if (inputAlgo == 'C') {
+                    System.out.println("End of program.");
+                    break;
+                }
+                //Code block for accepting a input number for processes
+                do {
+                    System.out.print("Input no. of processes [2-9]: ");
+                    processNum = keyboard.nextInt();
+
+                    if (processNum > 9 || processNum < 2) {
+                        System.out.println("Invalid Value. Please choose a number between 2 and 9.");
+                    }
+                } while (processNum > 9 || processNum < 2);
+
+                //Accepting the arrival time input
+                for (int i = 1; i <= processNum; i++) {
+                    System.out.print("AT" + i + ": ");
+                    int inputArrival = keyboard.nextInt();
+                    arrivalTime.add(inputArrival);
+                }
+
+                //Accepting burst time input
+                for (int i = 1; i <= processNum; i++) {
+                    System.out.print("BT" + i + ": ");
+                    int inputBurst = keyboard.nextInt();
+                    burstTime.add(inputBurst);
+                }
+
+                //puts the input into the array to be used in the computation of SJF
+                Process proc[] = {};
+                for (int i = 1; i <= processNum; i++) {
+                    proc = Arrays.copyOf(proc, proc.length + 1);
+                    proc[proc.length - 1] = new Process(i, burstTime.get(i - 1), arrivalTime.get(i - 1));
+                }
+
+                //puts the input into the necessary objects to be used in the computation of RR
+                int quantum;
+                int processes[] = {};
+                int burstTimeInput[] = {};
+                for (int i = 1; i <= processNum; i++) {
+                    processes = Arrays.copyOf(processes, processes.length + 1);
+                    processes[processes.length - 1] = i;
+                }
+                for (int i = 1; i <= processNum; i++) {
+                    burstTimeInput = Arrays.copyOf(burstTimeInput, burstTimeInput.length + 1);
+                    burstTimeInput[burstTimeInput.length - 1] = burstTime.get(i - 1);
+                }
 
                 //Redirects to methods for chosen algorithms
                 if (chosenAlgo != 'A' && chosenAlgo != 'B' && chosenAlgo != 'C') {
@@ -101,7 +115,10 @@ public class PreemptiveScheduling {
 
             } while (chosenAlgo != 'A' && chosenAlgo != 'B' && chosenAlgo != 'C');
 
-            System.out.println("Input again? (Y/N): ");
+            if (inputAlgo == 'C') {
+                break;
+            }
+            System.out.print("Input again? (Y/N): ");
             chooseContinue = Character.toUpperCase(keyboard.next().charAt(0));
 
             if (chooseContinue != 'Y' && chooseContinue != 'N') {
@@ -187,7 +204,7 @@ public class PreemptiveScheduling {
     static void SJFfindavgTime(Process proc[], int n) {
         int wt[] = new int[n], tat[] = new int[n];
         int total_wt = 0, total_tat = 0;
-
+        String gantt = "";
         // Function to find waiting time of all processes
         findWaitingTime(proc, n, wt);
 
@@ -196,6 +213,7 @@ public class PreemptiveScheduling {
 
         // Display processes along with all details
         System.out.println("Processes "
+                + " Arrival Time "
                 + " Burst time "
                 + " Waiting time "
                 + " Turn around time");
@@ -204,7 +222,8 @@ public class PreemptiveScheduling {
         for (int i = 0; i < n; i++) {
             total_wt = total_wt + wt[i];
             total_tat = total_tat + tat[i];
-            System.out.println(" " + proc[i].pid + "\t\t"
+            System.out.println(" P" + proc[i].pid + "\t\t"
+                    + proc[i].art + "\t\t"
                     + proc[i].bt + "\t\t " + wt[i]
                     + "\t\t" + tat[i]);
         }
@@ -213,6 +232,13 @@ public class PreemptiveScheduling {
                 + (float) total_wt / (float) n);
         System.out.println("Average turn around time = "
                 + (float) total_tat / (float) n);
+        for (int i = 0; i < n; i++) {
+            gantt = gantt + "P" + proc[i].pid + ", ";
+        }
+        gantt = gantt.substring(0, gantt.length() - 2);
+        System.out.println("Gantt Chart: " + gantt);
+        gantt = "";
+
         return;
     }
 

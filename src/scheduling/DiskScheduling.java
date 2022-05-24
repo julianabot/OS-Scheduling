@@ -85,8 +85,7 @@ public class DiskScheduling {
         seek_sequence[seek_sequence.length - 1] = head;
 
         double seek_time = (double) seek_count / (seek_sequence.length - 1);
-        
-        System.out.println("============================================");
+        System.out.println("------------------------------------------------------------");
         System.out.println("Total head movement: " + seek_count);
         System.out.println("Seek Time: " + seek_time);
 
@@ -95,8 +94,7 @@ public class DiskScheduling {
             System.out.print(seek_sequence[i] + " ");
         }
         System.out.println(" ");
-        System.out.println("============================================");
-        System.out.println(" ");
+        System.out.println("------------------------------------------------------------");
     }
 
 //==============================================================================
@@ -119,8 +117,8 @@ public class DiskScheduling {
         }
 
         double seek_time = (double) seek_count / size;
-           
-        System.out.println("============================================");
+
+        System.out.println("------------------------------------------------------------");
         System.out.println("Total head movement: " + seek_count);
         System.out.println("Seek Time: " + seek_time);
 
@@ -129,8 +127,7 @@ public class DiskScheduling {
             System.out.print(arr[i] + " ");
         }
         System.out.println(" ");
-        System.out.println("============================================");
-        System.out.println(" ");
+        System.out.println("------------------------------------------------------------");
     }
 
 //==============================================================================
@@ -213,8 +210,8 @@ public class DiskScheduling {
         }
 
         double seek_time = (double) seek_count / size;
-         
-        System.out.println("============================================");
+
+        System.out.println("------------------------------------------------------------");
         System.out.println("Total head movement: " + seek_count);
         System.out.println("Seek Time: " + seek_time);
 
@@ -223,8 +220,7 @@ public class DiskScheduling {
             System.out.print(seek_sequence.get(i) + " ");
         }
         System.out.println(" ");
-        System.out.println("============================================");
-        System.out.println(" ");
+        System.out.println("------------------------------------------------------------");
     }
 
 //==============================================================================
@@ -302,7 +298,7 @@ public class DiskScheduling {
 
         double seek_time = (double) seek_count / size;
 
-        System.out.println("============================================");
+        System.out.println("------------------------------------------------------------");
         System.out.println("Total head movement: " + seek_count);
         System.out.println("Seek Time: " + seek_time);
 
@@ -311,8 +307,7 @@ public class DiskScheduling {
             System.out.print(seek_sequence.get(i) + " ");
         }
         System.out.println(" ");
-        System.out.println("============================================");
-        System.out.println(" ");
+        System.out.println("------------------------------------------------------------");
     }
 //==============================================================================
 
@@ -326,37 +321,42 @@ public class DiskScheduling {
         do {
             Scanner sc = new Scanner(System.in);
 
-            System.out.print("Input Current Position: ");
-            int pos = sc.nextInt();
-
-            System.out.print("Input Track Size: ");
-            int tsize = sc.nextInt();
-
             do {
-                System.out.print("Input no. of processes [2-9]: ");
-                size = sc.nextInt();
-
-                if (size > 9 || size < 2) {
-                    System.out.println("Invalid Value. Please choose a number between 2 and 9.");
-                }
-            } while (size > 9 || size < 2);
-
-            int arr[] = new int[size];
-            for (int i = 0; i < size; i++) {
-                System.out.print("Location" + " " + (i + 1) + ": ");
-                arr[i] = sc.nextInt();
-
-            }
-
-            do {
-                System.out.println("[A] FCFS");
-                System.out.println("[B] SSTF");
-                System.out.println("[C] CSCAN");
-                System.out.println("[D] CLOOK");
-                System.out.println("[E] EXIT");
-                System.out.print("CHOICE: ");
+                System.out.println("Disk Scheduling Algorithms");
+                System.out.println("[A] First Come First Serve (FCFS)");
+                System.out.println("[B] Shortest Seek Time First (SSTF)");
+                System.out.println("[C] Circular Scan (CSCAN)");
+                System.out.println("[D] Circular Look (CLOOK)");
+                System.out.println("[E] Exit");
+                System.out.print("Compute for: ");
                 char inputAlgo = sc.next().charAt(0);
                 chosenAlgo = Character.toUpperCase(inputAlgo);
+                
+                if (chosenAlgo == 'E') {
+                    System.out.println("End of program.");
+                    break;
+                }
+                System.out.print("Input Current Position: ");
+                int pos = sc.nextInt();
+
+                System.out.print("Input Track Size: ");
+                int tsize = sc.nextInt();
+
+                do {
+                    System.out.print("Input no. of processes [2-9]: ");
+                    size = sc.nextInt();
+
+                    if (size > 9 || size < 2) {
+                        System.out.println("Invalid Value. Please choose a number between 2 and 9.");
+                    }
+                } while (size > 9 || size < 2);
+
+                int arr[] = new int[size];
+                for (int i = 0; i < size; i++) {
+                    System.out.print("Location" + " " + (i + 1) + ": ");
+                    arr[i] = sc.nextInt();
+
+                }
 
                 //Redirects to methods for chosen algorithms
                 if (chosenAlgo != 'A' && chosenAlgo != 'B' && chosenAlgo != 'C' && chosenAlgo != 'D' && chosenAlgo != 'E') {
@@ -377,7 +377,11 @@ public class DiskScheduling {
 
             } while (chosenAlgo != 'A' && chosenAlgo != 'B' && chosenAlgo != 'C' && chosenAlgo != 'D' && chosenAlgo != 'E');
 
-            System.out.println("Input again? (Y/N): ");
+            if (chosenAlgo == 'E') {
+                break;
+            }
+
+            System.out.print("Input again? (Y/N): ");
             chooseContinue = Character.toUpperCase(sc.next().charAt(0));
 
             if (chooseContinue != 'Y' && chooseContinue != 'N') {
