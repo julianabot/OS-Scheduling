@@ -109,19 +109,25 @@ public class PreemptiveScheduling {
                     proc = Arrays.copyOf(proc, proc.length + 1);
                     proc[proc.length - 1] = new Process(i, burstTime.get(i - 1), arrivalTime.get(i - 1));
                 }
+                
+                //puts the input into the array to be used in the computation of RR
+                int n,tq, timer = 0, maxProccessIndex = 0;
+                float avgWait = 0, avgTT = 0;
+                int arrival[] = new int[processNum];
+                int burst[] = new int[processNum];
+                int wait[] = new int[processNum];
+                int turn[] = new int[processNum];
+                int queue[] = new int[processNum];
+                int temp_burst[] = new int[processNum];
+                boolean complete[] = new boolean[processNum];
+                for(int i = 1; i <= processNum; i++){
+                    arrival[i - 1] = arrivalTime.get(i - 1);
+                }
+                for(int i = 1; i <= processNum; i++){
+                    burst[i - 1] = burstTime.get(i - 1);
+                    temp_burst[i - 1] = burst[i - 1];
+                }
 
-                //puts the input into the necessary objects to be used in the computation of RR
-                int quantum;
-                int processes[] = {};
-                int burstTimeInput[] = {};
-                for (int i = 1; i <= processNum; i++) {
-                    processes = Arrays.copyOf(processes, processes.length + 1);
-                    processes[processes.length - 1] = i;
-                }
-                for (int i = 1; i <= processNum; i++) {
-                    burstTimeInput = Arrays.copyOf(burstTimeInput, burstTimeInput.length + 1);
-                    burstTimeInput[burstTimeInput.length - 1] = burstTime.get(i - 1);
-                }
 
                 //Redirects to methods for chosen algorithms
                 if (chosenAlgo != 'A' && chosenAlgo != 'B' && chosenAlgo != 'C') {
@@ -132,8 +138,85 @@ public class PreemptiveScheduling {
                 } else if (chosenAlgo == 'B') {
                     //Round Robin Chosen
                     System.out.print("Enter quantum number: ");
-                    quantum = keyboard.nextInt();
-                    RRfindavgTime(processes, processes.length, burstTimeInput, quantum);
+                    tq = keyboard.nextInt();
+                    
+                    System.out.println(Arrays.toString(arrival));
+                    System.out.println(Arrays.toString(burst));
+
+                    while (timer < arrival[0]) //Incrementing Timer until the first process arrives
+                    {
+                        timer++;
+                    }
+                    queue[0] = 1;
+
+                    while (true) {
+                        boolean flag = true;
+                        for (int i = 0; i < processNum; i++) {
+                            if (temp_burst[i] != 0) {
+                                flag = false;
+                                break;
+                            }
+                        }
+                        if (flag) {
+                            break;
+                        }
+
+                        for (int i = 0; (i < processNum) && (queue[i] != 0); i++) {
+                            int ctr = 0;
+                            while ((ctr < tq) && (temp_burst[queue[0] - 1] > 0)) {
+                                temp_burst[queue[0] - 1] -= 1;
+                                timer += 1;
+                                ctr++;
+
+                                //Updating the ready queue until all the processes arrive
+                                checkNewArrival(timer, arrival, processNum, maxProccessIndex, queue);
+                            }
+                            if ((temp_burst[queue[0] - 1] == 0) && (complete[queue[0] - 1] == false)) {
+                                turn[queue[0] - 1] = timer;        //turn currently stores exit times
+                                complete[queue[0] - 1] = true;
+                            }
+
+                            //checks whether or not CPU is idle
+                            boolean idle = true;
+                            if (queue[processNum - 1] == 0) {
+                                for (int k = 0; k < processNum && queue[k] != 0; k++) {
+                                    if (complete[queue[k] - 1] == false) {
+                                        idle = false;
+                                    }
+                                }
+                            } else {
+                                idle = false;
+                            }
+
+                            if (idle) {
+                                timer++;
+                                checkNewArrival(timer, arrival, processNum, maxProccessIndex, queue);
+                            }
+
+                            //Maintaining the entries of processes after each premption in the ready Queue
+                            queueMaintainence(queue, processNum);
+                        }
+                    }
+
+                    for (int i = 0; i < processNum; i++) {
+                        turn[i] = turn[i] - arrival[i];
+                        wait[i] = turn[i] - burst[i];
+                    }
+
+                    System.out.print("\nProgram No.\tArrival Time\tBurst Time\tWait Time\tTurnAround Time"
+                            + "\n");
+                    for (int i = 0; i < processNum; i++) {
+                        System.out.print(i + 1 + "\t\t" + arrival[i] + "\t\t" + burst[i]
+                                + "\t\t" + wait[i] + "\t\t" + turn[i] + "\n");
+                    }
+                    for (int i = 0; i < processNum; i++) {
+                        avgWait += wait[i];
+                        avgTT += turn[i];
+                    }
+                    System.out.print("\nAverage wait time : " + (avgWait / processNum)
+                            + "\nAverage Turn Around Time : " + (avgTT / processNum));
+                    
+                    //end of RR
                 } else {
                     System.out.println("End of program.");
                 }
@@ -291,103 +374,142 @@ public class PreemptiveScheduling {
     }
 
     //computation methods for RR
-    static void RRfindWaitingTime(int processes[], int n,
-            int bt[], int wt[], int quantum) {
-        // Make a copy of burst times bt[] to store remaining
-        // burst times.
-        int rem_bt[] = new int[n];
-        for (int i = 0; i < n; i++) {
-            rem_bt[i] = bt[i];
-        }
-
-        int t = 0; // Current time
-
-        // Keep traversing processes in round robin manner
-        // until all of them are not done.
-        while (true) {
-            boolean done = true;
-
-            // Traverse all processes one by one repeatedly
-            for (int i = 0; i < n; i++) {
-                // If burst time of a process is greater than 0
-                // then only need to process further
-                if (rem_bt[i] > 0) {
-                    done = false; // There is a pending process
-
-                    if (rem_bt[i] > quantum) {
-                        // Increase the value of t i.e. shows
-                        // how much time a process has been processed
-                        t += quantum;
-
-                        // Decrease the burst_time of current process
-                        // by quantum
-                        rem_bt[i] -= quantum;
-                    } // If burst time is smaller than or equal to
-                    // quantum. Last cycle for this process
-                    else {
-                        // Increase the value of t i.e. shows
-                        // how much time a process has been processed
-                        t = t + rem_bt[i];
-
-                        // Waiting time is current time minus time
-                        // used by this process
-                        wt[i] = t - bt[i];
-
-                        // As the process gets fully executed
-                        // make its remaining burst time = 0
-                        rem_bt[i] = 0;
-                    }
-                }
-            }
-
-            // If all processes are done
-            if (done == true) {
+//    static void RRfindWaitingTime(int processes[], int n,
+//            int bt[], int wt[], int quantum) {
+//        // Make a copy of burst times bt[] to store remaining
+//        // burst times.
+//        int rem_bt[] = new int[n];
+//        for (int i = 0; i < n; i++) {
+//            rem_bt[i] = bt[i];
+//        }
+//
+//        int t = 0; // Current time
+//
+//        // Keep traversing processes in round robin manner
+//        // until all of them are not done.
+//        while (true) {
+//            boolean done = true;
+//
+//            // Traverse all processes one by one repeatedly
+//            for (int i = 0; i < n; i++) {
+//                // If burst time of a process is greater than 0
+//                // then only need to process further
+//                if (rem_bt[i] > 0) {
+//                    done = false; // There is a pending process
+//
+//                    if (rem_bt[i] > quantum) {
+//                        // Increase the value of t i.e. shows
+//                        // how much time a process has been processed
+//                        t += quantum;
+//
+//                        // Decrease the burst_time of current process
+//                        // by quantum
+//                        rem_bt[i] -= quantum;
+//                    } // If burst time is smaller than or equal to
+//                    // quantum. Last cycle for this process
+//                    else {
+//                        // Increase the value of t i.e. shows
+//                        // how much time a process has been processed
+//                        t = t + rem_bt[i];
+//
+//                        // Waiting time is current time minus time
+//                        // used by this process
+//                        wt[i] = t - bt[i];
+//
+//                        // As the process gets fully executed
+//                        // make its remaining burst time = 0
+//                        rem_bt[i] = 0;
+//                    }
+//                }
+//            }
+//
+//            // If all processes are done
+//            if (done == true) {
+//                break;
+//            }
+//        }
+//    }
+//
+//    // Method to calculate turn around time
+//    static void RRfindTurnAroundTime(int processes[], int n,
+//            int bt[], int wt[], int tat[]) {
+//        // calculating turnaround time by adding
+//        // bt[i] + wt[i]
+//        for (int i = 0; i < n; i++) {
+//            tat[i] = bt[i] + wt[i];
+//        }
+//    }
+//
+//    // Method to calculate average time
+//    static void RRfindavgTime(int processes[], int n, int bt[],
+//            int quantum) {
+//        int wt[] = new int[n], tat[] = new int[n];
+//        int total_wt = 0, total_tat = 0;
+//
+//        // Function to find waiting time of all processes
+//        RRfindWaitingTime(processes, n, bt, wt, quantum);
+//
+//        // Function to find turn around time for all processes
+//        RRfindTurnAroundTime(processes, n, bt, wt, tat);
+//
+//        // Display processes along with all details
+//        System.out.println("Processes "
+//                + " Burst time "
+//                + " Waiting time "
+//                + " Turn around time");
+//
+//        // Calculate total waiting time and total turn
+//        // around time
+//        for (int i = 0; i < n; i++) {
+//            total_wt = total_wt + wt[i];
+//            total_tat = total_tat + tat[i];
+//            System.out.println(" " + (i + 1) + "\t\t" + bt[i] + "\t "
+//                    + wt[i] + "\t\t " + tat[i]);
+//        }
+//
+//        System.out.println("Average waiting time = "
+//                + (float) total_wt / (float) n);
+//        System.out.println("Average turn around time = "
+//                + (float) total_tat / (float) n);
+//        return;
+//    }
+    
+    //code methods for RR
+    public static void queueUpdation(int queue[],int timer,int arrival[],int n, int maxProccessIndex){
+        int zeroIndex = -1;
+        for(int i = 0; i < n; i++){
+            if(queue[i] == 0){
+                zeroIndex = i;
                 break;
             }
         }
+        if(zeroIndex == -1)
+            return;
+        queue[zeroIndex] = maxProccessIndex + 1;
     }
-
-    // Method to calculate turn around time
-    static void RRfindTurnAroundTime(int processes[], int n,
-            int bt[], int wt[], int tat[]) {
-        // calculating turnaround time by adding
-        // bt[i] + wt[i]
-        for (int i = 0; i < n; i++) {
-            tat[i] = bt[i] + wt[i];
+ 
+    public static void checkNewArrival(int timer, int arrival[], int n, int maxProccessIndex,int queue[]){
+        if(timer <= arrival[n-1]){
+            boolean newArrival = false;
+            for(int j = (maxProccessIndex+1); j < n; j++){
+                if(arrival[j] <= timer){
+                    if(maxProccessIndex < j){
+                        maxProccessIndex = j;
+                        newArrival = true;
+                    }
+                }
+            }
+            if(newArrival)    //adds the index of the arriving process(if any)
+                queueUpdation(queue,timer,arrival,n, maxProccessIndex);       
         }
     }
-
-    // Method to calculate average time
-    static void RRfindavgTime(int processes[], int n, int bt[],
-            int quantum) {
-        int wt[] = new int[n], tat[] = new int[n];
-        int total_wt = 0, total_tat = 0;
-
-        // Function to find waiting time of all processes
-        RRfindWaitingTime(processes, n, bt, wt, quantum);
-
-        // Function to find turn around time for all processes
-        RRfindTurnAroundTime(processes, n, bt, wt, tat);
-
-        // Display processes along with all details
-        System.out.println("Processes "
-                + " Burst time "
-                + " Waiting time "
-                + " Turn around time");
-
-        // Calculate total waiting time and total turn
-        // around time
-        for (int i = 0; i < n; i++) {
-            total_wt = total_wt + wt[i];
-            total_tat = total_tat + tat[i];
-            System.out.println(" " + (i + 1) + "\t\t" + bt[i] + "\t "
-                    + wt[i] + "\t\t " + tat[i]);
+   
+    public static void queueMaintainence(int queue[], int n){
+ 
+        for(int i = 0; (i < n-1) && (queue[i+1] != 0) ; i++){
+            int temp = queue[i];
+            queue[i] = queue[i+1];
+            queue[i+1] = temp;
         }
-
-        System.out.println("Average waiting time = "
-                + (float) total_wt / (float) n);
-        System.out.println("Average turn around time = "
-                + (float) total_tat / (float) n);
-        return;
     }
 }
