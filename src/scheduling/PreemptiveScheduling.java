@@ -139,9 +139,6 @@ public class PreemptiveScheduling {
                     //Round Robin Chosen
                     System.out.print("Enter quantum number: ");
                     tq = keyboard.nextInt();
-                    
-                    System.out.println(Arrays.toString(arrival));
-                    System.out.println(Arrays.toString(burst));
 
                     while (timer < arrival[0]) //Incrementing Timer until the first process arrives
                     {
