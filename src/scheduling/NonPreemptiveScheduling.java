@@ -2,6 +2,24 @@ package scheduling;
 
 import java.util.*;
 
+class ProcessSJF {
+
+    int pid; // Process ID
+    int bt; // Burst Time
+    int art; // Arrival Time
+    int wt;
+    int tat;
+
+    public ProcessSJF(int pid, int art, int bt, int wt, int tat) {
+        this.pid = pid;
+        this.bt = bt;
+        this.art = art;
+        this.wt = wt;
+        this.tat = tat;
+    }
+
+}
+
 public class NonPreemptiveScheduling {
 
     public static void main(String[] args) {
@@ -25,6 +43,8 @@ public class NonPreemptiveScheduling {
         do {
             display_menu();
             chosenAlgo = sc.next().charAt(0);
+            chosenAlgo = Character.toUpperCase(chosenAlgo);
+
             System.out.println("------------------------------------------------------------");
             switch (chosenAlgo) {
                 case 'A':
@@ -34,7 +54,7 @@ public class NonPreemptiveScheduling {
                     System.out.println("First Come First Serve (FCSF)");
                     break;
             }
-            if (chosenAlgo == 'C' || chosenAlgo != 'A' || chosenAlgo != 'B') {
+            if (chosenAlgo == 'C') {
                 System.out.println("End of program.");
                 break;
             }
@@ -98,23 +118,58 @@ public class NonPreemptiveScheduling {
                         }
                     }
 
+                    ArrayList<ProcessSJF> arr = new ArrayList<ProcessSJF>(n);
+
+                    for (int i = 0; i < n; i++) {
+                        pid[i] = i + 1;
+                        ProcessSJF temp = new ProcessSJF(pid[i], at[i], bt[i], wt[i], ta[i]);
+                        arr.add(temp);
+                    }
+
+                    Collections.sort(arr, new Comparator<ProcessSJF>() {
+                        public int compare(ProcessSJF e1, ProcessSJF e2) {
+                            return Integer.compare(e1.art, e2.art);
+                        }
+                    });
+
+                    ArrayList<ProcessSJF> arrbt = new ArrayList<ProcessSJF>(n - 1);
+
+                    for (int i = 1; i < n; i++) {
+                        ProcessSJF temp = new ProcessSJF(arr.get(i).pid, arr.get(i).art, arr.get(i).bt, arr.get(i).wt, arr.get(i).tat);
+                        arrbt.add(temp);
+                    }
+
+                    Collections.sort(arrbt, new Comparator<ProcessSJF>() {
+                        public int compare(ProcessSJF e1, ProcessSJF e2) {
+                            return Integer.compare(e1.bt, e2.bt);
+                        }
+                    });
+
                     System.out.println("Processes "
                             + " Arrival Time "
                             + " Burst Time "
                             + " Turnaround Time "
                             + " Waiting Time ");
 
-                    for (int i = 0; i < n; i++) {
-                        avgwt += wt[i];
-                        avgta += ta[i];
-                        System.out.println(" P" + pid[i] + "\t\t" + at[i] + "\t\t" + bt[i] + "\t\t" + ta[i] + "\t\t" + wt[i]);
+                    for (int i = 0; i < n - 1; i++) {
+                        if (i == 0) {
+                            avgwt += arr.get(i).wt;
+                            avgta += arr.get(i).tat;
+                            System.out.println(" P" + arr.get(i).pid + "\t\t" + arr.get(i).art + "\t\t" + arr.get(i).bt + "\t\t" + arr.get(i).tat + "\t\t" + arr.get(i).wt);
+                        }
+                        avgwt += arrbt.get(i).wt;
+                        avgta += arrbt.get(i).tat;
+                        System.out.println(" P" + arrbt.get(i).pid + "\t\t" + arrbt.get(i).art + "\t\t" + arrbt.get(i).bt + "\t\t" + arrbt.get(i).tat + "\t\t" + arrbt.get(i).wt);
                     }
-                    System.out.println("Average Waiting Time = " + (float) (avgwt / n));
 
+                    System.out.println("Average Waiting Time = " + (float) (avgwt / n));
                     System.out.println("Average Turnaround Time = " + (float) (avgta / n));
 
-                    for (int i = 0; i < n; i++) {
-                        gantt = gantt + "P" + pid[i] + " | ";
+                    for (int i = 0; i < n - 1; i++) {
+                        if (i == 0) {
+                            gantt = gantt + "P" + arr.get(i).pid + " | ";
+                        }
+                        gantt = gantt + "P" + arrbt.get(i).pid + " | ";
                     }
 
                     gantt = gantt.substring(0, gantt.length() - 2);
