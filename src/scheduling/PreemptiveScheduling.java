@@ -12,12 +12,37 @@ class Process {
     int pid; // Process ID
     int bt; // Burst Time
     int art; // Arrival Time
+    int wt;
+    int tat;
 
     public Process(int pid, int bt, int art) {
         this.pid = pid;
         this.bt = bt;
         this.art = art;
     }
+
+    public Process(int pid, int bt, int art, int wt, int tat) {
+        this.pid = pid;
+        this.bt = bt;
+        this.art = art;
+        this.wt = wt;
+        this.tat = wt;
+    }
+
+    public int getBurstTime() {
+        return this.bt;
+    }
+
+    // overriding the compareTo method of Comparable class
+    public int compareTo(Process comparestu) {
+        int burstTime
+                = ((Process) comparestu).getBurstTime();
+
+        //  For Ascending order
+        return this.bt - burstTime;
+
+    }
+
 }
 
 public class PreemptiveScheduling {
@@ -218,6 +243,29 @@ public class PreemptiveScheduling {
                 + " Waiting time "
                 + " Turn around time");
 
+        //Arrange based on smallest burst time
+        ArrayList<Process> arranged = new ArrayList<Process>(n);
+
+        for (int i = 0; i < n; i++) {
+            Process temp = new Process(proc[i].pid, proc[i].bt, proc[i].art, wt[i], tat[i]);
+            arranged.add(temp);
+        }
+        Collections.sort(arranged, new Comparator<Process>() {
+            public int compare(Process e1, Process e2) {
+                return Integer.compare(e1.getBurstTime(), e2.getBurstTime());
+            }
+        });
+        System.out.println("start");
+        for (int i = 0; i < n; i++) {
+            System.out.println(" P" + arranged.get(i).pid + "\t\t"
+                    + arranged.get(i).art + "\t\t"
+                    + arranged.get(i).bt + "\t\t " + arranged.get(i).wt
+                    + "\t\t" + arranged.get(i).tat);
+        }
+
+        System.out.println("end");
+
+        // not arranged output
         // Calculate total waiting time and total turnaround time
         for (int i = 0; i < n; i++) {
             total_wt = total_wt + wt[i];
