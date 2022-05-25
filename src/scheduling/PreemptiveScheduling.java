@@ -26,7 +26,7 @@ class Process {
         this.bt = bt;
         this.art = art;
         this.wt = wt;
-        this.tat = wt;
+        this.tat = tat;
     }
 
     public int getBurstTime() {
@@ -109,9 +109,9 @@ public class PreemptiveScheduling {
                     proc = Arrays.copyOf(proc, proc.length + 1);
                     proc[proc.length - 1] = new Process(i, burstTime.get(i - 1), arrivalTime.get(i - 1));
                 }
-                
+
                 //puts the input into the array to be used in the computation of RR
-                int n,tq, timer = 0, maxProccessIndex = 0;
+                int n, tq, timer = 0, maxProccessIndex = 0;
                 float avgWait = 0, avgTT = 0;
                 int arrival[] = new int[processNum];
                 int burst[] = new int[processNum];
@@ -120,14 +120,13 @@ public class PreemptiveScheduling {
                 int queue[] = new int[processNum];
                 int temp_burst[] = new int[processNum];
                 boolean complete[] = new boolean[processNum];
-                for(int i = 1; i <= processNum; i++){
+                for (int i = 1; i <= processNum; i++) {
                     arrival[i - 1] = arrivalTime.get(i - 1);
                 }
-                for(int i = 1; i <= processNum; i++){
+                for (int i = 1; i <= processNum; i++) {
                     burst[i - 1] = burstTime.get(i - 1);
                     temp_burst[i - 1] = burst[i - 1];
                 }
-
 
                 //Redirects to methods for chosen algorithms
                 if (chosenAlgo != 'A' && chosenAlgo != 'B' && chosenAlgo != 'C') {
@@ -212,7 +211,7 @@ public class PreemptiveScheduling {
                     }
                     System.out.print("\nAverage wait time : " + (avgWait / processNum)
                             + "\nAverage Turn Around Time : " + (avgTT / processNum));
-                    
+
                     //end of RR
                 } else {
                     System.out.println("End of program.");
@@ -320,8 +319,9 @@ public class PreemptiveScheduling {
         System.out.println("Processes "
                 + " Arrival Time "
                 + " Burst time "
+                + " Turnaround time"
                 + " Waiting time "
-                + " Turn around time");
+        );
 
         //Arrange based on smallest burst time
         ArrayList<Process> arranged = new ArrayList<Process>(n);
@@ -332,33 +332,21 @@ public class PreemptiveScheduling {
         }
         Collections.sort(arranged, new Comparator<Process>() {
             public int compare(Process e1, Process e2) {
-                return Integer.compare(e1.getBurstTime(), e2.getBurstTime());
+                return Integer.compare(e1.art, e2.art);
             }
         });
-        System.out.println("start");
+
         for (int i = 0; i < n; i++) {
             System.out.println(" P" + arranged.get(i).pid + "\t\t"
                     + arranged.get(i).art + "\t\t"
-                    + arranged.get(i).bt + "\t\t " + arranged.get(i).wt
-                    + "\t\t" + arranged.get(i).tat);
+                    + arranged.get(i).bt + "\t\t " + arranged.get(i).tat
+                    + "\t\t" + arranged.get(i).wt);
         }
 
-        System.out.println("end");
-
-        // not arranged output
         // Calculate total waiting time and total turnaround time
-        for (int i = 0; i < n; i++) {
-            total_wt = total_wt + wt[i];
-            total_tat = total_tat + tat[i];
-            System.out.println(" P" + proc[i].pid + "\t\t"
-                    + proc[i].art + "\t\t"
-                    + proc[i].bt + "\t\t " + wt[i]
-                    + "\t\t" + tat[i]);
-        }
-
-        System.out.println("Average waiting time = "
+        System.out.println("Average Waiting Time = "
                 + (float) total_wt / (float) n);
-        System.out.println("Average turn around time = "
+        System.out.println("Average Turnaround Time = "
                 + (float) total_tat / (float) n);
         for (int i = 0; i < n; i++) {
             gantt = gantt + "P" + proc[i].pid + ", ";
@@ -470,43 +458,45 @@ public class PreemptiveScheduling {
 //                + (float) total_tat / (float) n);
 //        return;
 //    }
-    
     //code methods for RR
-    public static void queueUpdation(int queue[],int timer,int arrival[],int n, int maxProccessIndex){
+    public static void queueUpdation(int queue[], int timer, int arrival[], int n, int maxProccessIndex) {
         int zeroIndex = -1;
-        for(int i = 0; i < n; i++){
-            if(queue[i] == 0){
+        for (int i = 0; i < n; i++) {
+            if (queue[i] == 0) {
                 zeroIndex = i;
                 break;
             }
         }
-        if(zeroIndex == -1)
+        if (zeroIndex == -1) {
             return;
+        }
         queue[zeroIndex] = maxProccessIndex + 1;
     }
- 
-    public static void checkNewArrival(int timer, int arrival[], int n, int maxProccessIndex,int queue[]){
-        if(timer <= arrival[n-1]){
+
+    public static void checkNewArrival(int timer, int arrival[], int n, int maxProccessIndex, int queue[]) {
+        if (timer <= arrival[n - 1]) {
             boolean newArrival = false;
-            for(int j = (maxProccessIndex+1); j < n; j++){
-                if(arrival[j] <= timer){
-                    if(maxProccessIndex < j){
+            for (int j = (maxProccessIndex + 1); j < n; j++) {
+                if (arrival[j] <= timer) {
+                    if (maxProccessIndex < j) {
                         maxProccessIndex = j;
                         newArrival = true;
                     }
                 }
             }
-            if(newArrival)    //adds the index of the arriving process(if any)
-                queueUpdation(queue,timer,arrival,n, maxProccessIndex);       
+            if (newArrival) //adds the index of the arriving process(if any)
+            {
+                queueUpdation(queue, timer, arrival, n, maxProccessIndex);
+            }
         }
     }
-   
-    public static void queueMaintainence(int queue[], int n){
- 
-        for(int i = 0; (i < n-1) && (queue[i+1] != 0) ; i++){
+
+    public static void queueMaintainence(int queue[], int n) {
+
+        for (int i = 0; (i < n - 1) && (queue[i + 1] != 0); i++) {
             int temp = queue[i];
-            queue[i] = queue[i+1];
-            queue[i+1] = temp;
+            queue[i] = queue[i + 1];
+            queue[i + 1] = temp;
         }
     }
 }
