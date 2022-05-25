@@ -85,16 +85,19 @@ public class DiskScheduling {
         seek_sequence[seek_sequence.length - 1] = head;
 
         double seek_time = (double) seek_count / (seek_sequence.length - 1);
-        System.out.println("------------------------------------------------------------");
+        
+         System.out.println(" ");
         System.out.println("Total head movement: " + seek_count);
-        System.out.println("Seek Time: " + seek_time);
+        System.out.println("Average Seek Time: " + seek_time);
 
-        System.out.println("Seek Sequence is");
-        for (int i = 0; i < seek_sequence.length; i++) {
-            System.out.print(seek_sequence[i] + " ");
+        System.out.println("_______________________________________________________________________________________");
+        System.out.print("Seek Sequence: [START] →");
+         for (int i = 0; i < seek_sequence.length; i++) {
+            System.out.print(" " + seek_sequence[i] + " →");
         }
-        System.out.println(" ");
-        System.out.println("------------------------------------------------------------");
+        System.out.println(" [END]");
+        System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
+  
     }
 
 //==============================================================================
@@ -118,16 +121,18 @@ public class DiskScheduling {
 
         double seek_time = (double) seek_count / size;
 
-        System.out.println("------------------------------------------------------------");
-        System.out.println("Total head movement: " + seek_count);
-        System.out.println("Seek Time: " + seek_time);
-
-        System.out.println("Seek Sequence is");
-        for (int i = 0; i < size; i++) {
-            System.out.print(arr[i] + " ");
-        }
         System.out.println(" ");
-        System.out.println("------------------------------------------------------------");
+        System.out.println("Total head movement: " + seek_count);
+        System.out.println("Average Seek Time: " + seek_time);
+
+        System.out.println("_______________________________________________________________________________________");
+        System.out.print("Seek Sequence: [START] →");
+        for (int i = 0; i < size; i++) {
+            System.out.print(" " + arr[i] + " →");
+        }
+        System.out.println(" [END]");
+        System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
+        
     }
 
 //==============================================================================
@@ -211,16 +216,17 @@ public class DiskScheduling {
 
         double seek_time = (double) seek_count / size;
 
-        System.out.println("------------------------------------------------------------");
-        System.out.println("Total head movement: " + seek_count);
-        System.out.println("Seek Time: " + seek_time);
-
-        System.out.println("Seek Sequence is");
-        for (int i = 0; i < seek_sequence.size(); i++) {
-            System.out.print(seek_sequence.get(i) + " ");
-        }
         System.out.println(" ");
-        System.out.println("------------------------------------------------------------");
+        System.out.println("Total head movement: " + seek_count);
+        System.out.println("Average Seek Time: " + seek_time);
+
+        System.out.println("_______________________________________________________________________________________");
+        System.out.print("Seek Sequence: [START] →");
+        for (int i = 0; i < seek_sequence.size(); i++) {
+            System.out.print(" " + seek_sequence.get(i) + " →");
+        }
+        System.out.println(" [END]");
+        System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
     }
 
 //==============================================================================
@@ -298,16 +304,16 @@ public class DiskScheduling {
 
         double seek_time = (double) seek_count / size;
 
-        System.out.println("------------------------------------------------------------");
+        System.out.println(" ");
         System.out.println("Total head movement: " + seek_count);
         System.out.println("Seek Time: " + seek_time);
-
-        System.out.println("Seek Sequence is");
+        System.out.println("_______________________________________________________________________________________");
+        System.out.print("Seek Sequence: [START] →");
         for (int i = 0; i < seek_sequence.size(); i++) {
-            System.out.print(seek_sequence.get(i) + " ");
+            System.out.print(" " + seek_sequence.get(i) + " →");
         }
-        System.out.println(" ");
-        System.out.println("------------------------------------------------------------");
+        System.out.println(" [END]");
+        System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
     }
 //==============================================================================
 
@@ -317,6 +323,7 @@ public class DiskScheduling {
         char chosenAlgo;
         char chooseContinue;
         int size;
+        int tsize;
 
         do {
             Scanner sc = new Scanner(System.in);
@@ -339,9 +346,15 @@ public class DiskScheduling {
                 System.out.print("Input Current Position: ");
                 int pos = sc.nextInt();
 
-                System.out.print("Input Track Size: ");
-                int tsize = sc.nextInt();
-
+                do{
+                    System.out.print("Input Track Size: ");
+                    tsize = sc.nextInt();
+                    
+                    if (tsize < pos){
+                            System.out.println("Track size must not be smaller than current head position.");
+                    }
+                }while (tsize < pos);
+                
                 do {
                     System.out.print("Input no. of processes [2-9]: ");
                     size = sc.nextInt();
@@ -353,9 +366,14 @@ public class DiskScheduling {
 
                 int arr[] = new int[size];
                 for (int i = 0; i < size; i++) {
+                    do{
                     System.out.print("Location" + " " + (i + 1) + ": ");
                     arr[i] = sc.nextInt();
-
+                        
+                        if(arr[i] > tsize){
+                            System.out.println("Process location must not be greater than the track size.");
+                        }
+                    }while(arr[i] > tsize);
                 }
 
                 //Redirects to methods for chosen algorithms
