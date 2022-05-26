@@ -266,7 +266,7 @@ public class NonPreemptiveScheduling {
                 }
             }
             else
-                System.out.println("0 burst time is invalid in every process.");
+                System.out.println("0 burst time is invalid input.");
 
             System.out.print("Input again? (Y/N): ");
 
