@@ -102,7 +102,7 @@ public class DiskScheduling {
 
 //==============================================================================
 //FCFS==========================================================================
-    static void aFCFS(int arr[], int pos, int size) {
+    static void aFCFS(int arr[], int pos, int size, int head) {
         int seek_count = 0;
         int distance, cur_track;
 
@@ -126,7 +126,7 @@ public class DiskScheduling {
         System.out.println("Average Seek Time: " + seek_time);
 
         System.out.println("_______________________________________________________________________________________");
-        System.out.print("Seek Sequence: [START] →");
+        System.out.print("Seek Sequence: [START] → " + head + " →");
         for (int i = 0; i < size; i++) {
             System.out.print(" " + arr[i] + " →");
         }
@@ -221,7 +221,7 @@ public class DiskScheduling {
         System.out.println("Average Seek Time: " + seek_time);
 
         System.out.println("_______________________________________________________________________________________");
-        System.out.print("Seek Sequence: [START] →");
+        System.out.print("Seek Sequence: [START] → " + head + " →");
         for (int i = 0; i < seek_sequence.size(); i++) {
             System.out.print(" " + seek_sequence.get(i) + " →");
         }
@@ -308,7 +308,7 @@ public class DiskScheduling {
         System.out.println("Total head movement: " + seek_count);
         System.out.println("Seek Time: " + seek_time);
         System.out.println("_______________________________________________________________________________________");
-        System.out.print("Seek Sequence: [START] →");
+        System.out.print("Seek Sequence: [START] → " + head + " →");
         for (int i = 0; i < seek_sequence.size(); i++) {
             System.out.print(" " + seek_sequence.get(i) + " →");
         }
@@ -380,7 +380,7 @@ public class DiskScheduling {
                 if (chosenAlgo != 'A' && chosenAlgo != 'B' && chosenAlgo != 'C' && chosenAlgo != 'D' && chosenAlgo != 'E') {
                     System.out.println("Invalid input. Please select a valid input from the example above.");
                 } else if (chosenAlgo == 'A') {
-                    aFCFS(arr, pos, size);
+                    aFCFS(arr, pos, size, pos);
                 } else if (chosenAlgo == 'B') {
                     shortestSeekTimeFirst(arr, pos);
                 } else if (chosenAlgo == 'C') {
