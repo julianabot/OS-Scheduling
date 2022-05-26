@@ -9,13 +9,15 @@ class ProcessSJF {
     int art; // Arrival Time
     int wt;
     int tat;
+    int ct;
 
-    public ProcessSJF(int pid, int art, int bt, int wt, int tat) {
+    public ProcessSJF(int pid, int art, int bt, int wt, int tat, int ct) {
         this.pid = pid;
         this.bt = bt;
         this.art = art;
         this.wt = wt;
         this.tat = tat;
+        this.ct = ct;
     }
 }
 
@@ -39,6 +41,7 @@ public class NonPreemptiveScheduling {
         char chosenAlgo;
         String gantt = "";
         String completion = "";
+
         int n;
         do {
             display_menu();
@@ -121,11 +124,11 @@ public class NonPreemptiveScheduling {
                     ArrayList<ProcessSJF> arr = new ArrayList<ProcessSJF>(n);
 
                     for (int i = 0; i < n; i++) {
-                        pid[i] = i + 1;
-                        ProcessSJF temp = new ProcessSJF(pid[i], at[i], bt[i], wt[i], ta[i]);
+                        int index = pid[i] - 1;
+                        ProcessSJF temp = new ProcessSJF(index + 1, at[index], bt[index], wt[index], ta[index], ct[index]);
                         arr.add(temp);
                     }
-                    
+
                     System.out.println("Processes "
                             + " Arrival Time "
                             + " Burst Time "
@@ -140,15 +143,29 @@ public class NonPreemptiveScheduling {
 
                     System.out.println("Average Waiting Time = " + (float) (avgwt / n));
                     System.out.println("Average Turnaround Time = " + (float) (avgta / n));
-                    
+
                     for (int i = 0; i < n; i++) {
                         gantt = gantt + "P" + arr.get(i).pid + " | ";
                     }
 
                     gantt = gantt.substring(0, gantt.length() - 2);
 
+                    for (int i = 0; i < n; i++) {
+                        if (i == 0) {
+                            completion = completion + "\t\t     " + arr.get(i).art + "    ";
+                        }
+                        if (String.valueOf(arr.get(i).ct).length() == 1) {
+                            completion = completion + arr.get(i).ct + "    ";
+                        } else if (String.valueOf(arr.get(i).ct).length() == 2) {
+                            completion = completion + arr.get(i).ct + "   ";
+                        } else if (String.valueOf(arr.get(i).ct).length() == 3) {
+                            completion = completion + arr.get(i).ct + "  ";
+                        }
+                    }
+
                     System.out.println("____________________________________________________________");
-                    System.out.println("Gantt Chart: [START] " + gantt + " [END]");
+                    System.out.println("Gantt Chart: [START] | " + gantt + "| [END]");
+                    System.out.println(completion);
                     System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
 
                     gantt = "";
