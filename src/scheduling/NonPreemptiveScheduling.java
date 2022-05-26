@@ -85,177 +85,188 @@ public class NonPreemptiveScheduling {
                 f[i] = 0;
             }
 
+            //to check if there is a 0 burst time
+            int badBurst = 0;
+            boolean valid = true;
+
             for (int i = 0; i < n; i++) {
                 System.out.print("BT" + (i + 1) + ": ");
                 bt[i] = sc.nextInt();
+                if (bt[i] == 0) {
+                    valid = false;
+                }
             }
 
-            switch (chosenAlgo) {
-                case 'A':
-                    int st = 0,
-                     tot = 0;
-                    float avgwt = 0,
-                     avgta = 0;
+            if (valid) {
+                switch (chosenAlgo) {
+                    case 'A':
+                        int st = 0,
+                         tot = 0;
+                        float avgwt = 0,
+                         avgta = 0;
 
-                    while (true) {
-                        int c = n, min = 999999;
-                        if (tot == n) {
-                            break;
+                        while (true) {
+                            int c = n, min = 999999;
+                            if (tot == n) {
+                                break;
+                            }
+                            for (int i = 0; i < n; i++) {
+                                if ((at[i] <= st) && (f[i] == 0) && (bt[i] < min)) {
+                                    min = bt[i];
+                                    c = i;
+                                }
+                            }
+                            if (c == n) {
+                                st++;
+                            } else {
+                                ct[c] = st + bt[c];
+                                st += bt[c];
+                                ta[c] = ct[c] - at[c];
+                                wt[c] = ta[c] - bt[c];
+                                f[c] = 1;
+                                pid[tot] = c + 1;
+                                tot++;
+                            }
                         }
+
+                        ArrayList<ProcessSJF> arr = new ArrayList<ProcessSJF>(n);
+
                         for (int i = 0; i < n; i++) {
-                            if ((at[i] <= st) && (f[i] == 0) && (bt[i] < min)) {
-                                min = bt[i];
-                                c = i;
+                            int index = pid[i] - 1;
+                            ProcessSJF temp = new ProcessSJF(index + 1, at[index], bt[index], wt[index], ta[index], ct[index]);
+                            arr.add(temp);
+                        }
+
+                        System.out.println("Processes "
+                                + " Arrival Time "
+                                + " Burst Time "
+                                + " Turnaround Time "
+                                + " Waiting Time ");
+
+                        for (int i = 0; i < n; i++) {
+                            avgwt += arr.get(i).wt;
+                            avgta += arr.get(i).tat;
+                            System.out.println(" P" + arr.get(i).pid + "\t\t" + arr.get(i).art + "\t\t" + arr.get(i).bt + "\t\t" + arr.get(i).tat + "\t\t" + arr.get(i).wt);
+                        }
+
+                        System.out.println("Average Waiting Time = " + (float) (avgwt / n));
+                        System.out.println("Average Turnaround Time = " + (float) (avgta / n));
+
+                        for (int i = 0; i < n; i++) {
+                            gantt = gantt + "P" + arr.get(i).pid + " | ";
+                        }
+
+                        gantt = gantt.substring(0, gantt.length() - 2);
+
+                        for (int i = 0; i < n; i++) {
+                            if (i == 0) {
+                                completion = completion + "\t\t     " + arr.get(i).art + "    ";
+                            }
+                            if (String.valueOf(arr.get(i).ct).length() == 1) {
+                                completion = completion + arr.get(i).ct + "    ";
+                            } else if (String.valueOf(arr.get(i).ct).length() == 2) {
+                                completion = completion + arr.get(i).ct + "   ";
+                            } else if (String.valueOf(arr.get(i).ct).length() == 3) {
+                                completion = completion + arr.get(i).ct + "  ";
                             }
                         }
-                        if (c == n) {
-                            st++;
-                        } else {
-                            ct[c] = st + bt[c];
-                            st += bt[c];
-                            ta[c] = ct[c] - at[c];
-                            wt[c] = ta[c] - bt[c];
-                            f[c] = 1;
-                            pid[tot] = c + 1;
-                            tot++;
-                        }
-                    }
 
-                    ArrayList<ProcessSJF> arr = new ArrayList<ProcessSJF>(n);
+                        System.out.println("____________________________________________________________");
+                        System.out.println("Gantt Chart: [START] | " + gantt + "| [END]");
+                        System.out.println(completion);
+                        System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
 
-                    for (int i = 0; i < n; i++) {
-                        int index = pid[i] - 1;
-                        ProcessSJF temp = new ProcessSJF(index + 1, at[index], bt[index], wt[index], ta[index], ct[index]);
-                        arr.add(temp);
-                    }
+                        gantt = "";
+                        break;
 
-                    System.out.println("Processes "
-                            + " Arrival Time "
-                            + " Burst Time "
-                            + " Turnaround Time "
-                            + " Waiting Time ");
+                    case 'B':
+                        int temp;
+                        avgwt = 0;
+                        avgta = 0;
 
-                    for (int i = 0; i < n; i++) {
-                        avgwt += arr.get(i).wt;
-                        avgta += arr.get(i).tat;
-                        System.out.println(" P" + arr.get(i).pid + "\t\t" + arr.get(i).art + "\t\t" + arr.get(i).bt + "\t\t" + arr.get(i).tat + "\t\t" + arr.get(i).wt);
-                    }
-
-                    System.out.println("Average Waiting Time = " + (float) (avgwt / n));
-                    System.out.println("Average Turnaround Time = " + (float) (avgta / n));
-
-                    for (int i = 0; i < n; i++) {
-                        gantt = gantt + "P" + arr.get(i).pid + " | ";
-                    }
-
-                    gantt = gantt.substring(0, gantt.length() - 2);
-
-                    for (int i = 0; i < n; i++) {
-                        if (i == 0) {
-                            completion = completion + "\t\t     " + arr.get(i).art + "    ";
-                        }
-                        if (String.valueOf(arr.get(i).ct).length() == 1) {
-                            completion = completion + arr.get(i).ct + "    ";
-                        } else if (String.valueOf(arr.get(i).ct).length() == 2) {
-                            completion = completion + arr.get(i).ct + "   ";
-                        } else if (String.valueOf(arr.get(i).ct).length() == 3) {
-                            completion = completion + arr.get(i).ct + "  ";
-                        }
-                    }
-
-                    System.out.println("____________________________________________________________");
-                    System.out.println("Gantt Chart: [START] | " + gantt + "| [END]");
-                    System.out.println(completion);
-                    System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
-
-                    gantt = "";
-                    break;
-
-                case 'B':
-                    int temp;
-                    avgwt = 0;
-                    avgta = 0;
-
-                    //sorting according to arrival times
-                    for (int i = 0; i < n; i++) {
-                        for (int j = 0; j < n - (i + 1); j++) {
-                            if (at[j] > at[j + 1]) {
-                                temp = at[j];
-                                at[j] = at[j + 1];
-                                at[j + 1] = temp;
-                                temp = bt[j];
-                                bt[j] = bt[j + 1];
-                                bt[j + 1] = temp;
-                                temp = pid[j];
-                                pid[j] = pid[j + 1];
-                                pid[j + 1] = temp;
+                        //sorting according to arrival times
+                        for (int i = 0; i < n; i++) {
+                            for (int j = 0; j < n - (i + 1); j++) {
+                                if (at[j] > at[j + 1]) {
+                                    temp = at[j];
+                                    at[j] = at[j + 1];
+                                    at[j + 1] = temp;
+                                    temp = bt[j];
+                                    bt[j] = bt[j + 1];
+                                    bt[j + 1] = temp;
+                                    temp = pid[j];
+                                    pid[j] = pid[j + 1];
+                                    pid[j + 1] = temp;
+                                }
                             }
                         }
-                    }
 
-                    // finding completion times
-                    for (int i = 0; i < n; i++) {
-                        if (i == 0) {
-                            ct[i] = at[i] + bt[i];
-                        } else {
-                            if (at[i] > ct[i - 1]) {
+                        // finding completion times
+                        for (int i = 0; i < n; i++) {
+                            if (i == 0) {
                                 ct[i] = at[i] + bt[i];
                             } else {
-                                ct[i] = ct[i - 1] + bt[i];
+                                if (at[i] > ct[i - 1]) {
+                                    ct[i] = at[i] + bt[i];
+                                } else {
+                                    ct[i] = ct[i - 1] + bt[i];
+                                }
+                            }
+                            ta[i] = ct[i] - at[i];        // turnaround time= completion time- arrival time
+                            wt[i] = ta[i] - bt[i];        // waiting time= turnaround time- burst time
+                            avgwt += wt[i];               // total waiting time
+                            avgta += ta[i];               // total turnaround time
+                        }
+
+                        System.out.println("Processes "
+                                + " Arrival Time "
+                                + " Burst Time "
+                                + " Turnaround Time "
+                                + " Waiting Time ");
+
+                        for (int i = 0; i < n; i++) {
+                            System.out.println(" P" + pid[i] + "\t\t" + at[i] + "\t\t" + bt[i] + "\t\t" + ta[i] + "\t\t" + wt[i]);
+                        }
+                        System.out.println("Average Waiting Time: " + (float) (avgwt / n));     // printing average waiting time.
+                        System.out.println("Average Turnaround Time: " + (float) (avgta / n));  // printing average turnaround time.
+
+                        //Printing for gantt chart
+                        for (int i = 0; i < n; i++) {
+                            gantt = gantt + "P" + pid[i] + " | ";
+                        }
+
+                        for (int i = 0; i < n; i++) {
+                            if (i == 0) {
+                                completion = completion + "\t\t     " + at[i] + "    ";
+                            }
+                            if (String.valueOf(ct[i]).length() == 1) {
+                                completion = completion + ct[i] + "    ";
+                            } else if (String.valueOf(ct[i]).length() == 2) {
+                                completion = completion + ct[i] + "   ";
+                            } else if (String.valueOf(ct[i]).length() == 3) {
+                                completion = completion + ct[i] + "  ";
                             }
                         }
-                        ta[i] = ct[i] - at[i];        // turnaround time= completion time- arrival time
-                        wt[i] = ta[i] - bt[i];        // waiting time= turnaround time- burst time
-                        avgwt += wt[i];               // total waiting time
-                        avgta += ta[i];               // total turnaround time
-                    }
 
-                    System.out.println("Processes "
-                            + " Arrival Time "
-                            + " Burst Time "
-                            + " Turnaround Time "
-                            + " Waiting Time ");
+                        gantt = gantt.substring(0, gantt.length() - 2);
+                        System.out.println("____________________________________________________________");
+                        System.out.println("Gantt Chart: [START] | " + gantt + "| [END]");
+                        System.out.println(completion);
+                        System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
+                        completion = "";
+                        gantt = "";
 
-                    for (int i = 0; i < n; i++) {
-                        System.out.println(" P" + pid[i] + "\t\t" + at[i] + "\t\t" + bt[i] + "\t\t" + ta[i] + "\t\t" + wt[i]);
-                    }
-                    System.out.println("Average Waiting Time: " + (float) (avgwt / n));     // printing average waiting time.
-                    System.out.println("Average Turnaround Time: " + (float) (avgta / n));  // printing average turnaround time.
-
-                    //Printing for gantt chart
-                    for (int i = 0; i < n; i++) {
-                        gantt = gantt + "P" + pid[i] + " | ";
-                    }
-
-                    for (int i = 0; i < n; i++) {
-                        if (i == 0) {
-                            completion = completion + "\t\t     " + at[i] + "    ";
-                        }
-                        if (String.valueOf(ct[i]).length() == 1) {
-                            completion = completion + ct[i] + "    ";
-                        } else if (String.valueOf(ct[i]).length() == 2) {
-                            completion = completion + ct[i] + "   ";
-                        } else if (String.valueOf(ct[i]).length() == 3) {
-                            completion = completion + ct[i] + "  ";
-                        }
-                    }
-
-                    gantt = gantt.substring(0, gantt.length() - 2);
-                    System.out.println("____________________________________________________________");
-                    System.out.println("Gantt Chart: [START] | " + gantt + "| [END]");
-                    System.out.println(completion);
-                    System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
-                    completion = "";
-                    gantt = "";
-
-                    break;
-                case 'C':
-                    System.out.println("End of program");
-                    break;
-                default:
-                    System.err.println("Unrecognized option");
-                    break;
+                        break;
+                    case 'C':
+                        System.out.println("End of program");
+                        break;
+                    default:
+                        System.err.println("Unrecognized option");
+                        break;
+                }
             }
+            else
+                System.out.println("0 burst time is invalid in every process.");
 
             System.out.print("Input again? (Y/N): ");
 
