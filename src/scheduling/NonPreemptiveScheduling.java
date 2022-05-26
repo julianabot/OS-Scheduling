@@ -87,17 +87,25 @@ public class NonPreemptiveScheduling {
 
             //to check if there is a 0 burst time
             int badBurst = 0;
-            boolean valid = true;
+            boolean valid;
 
             for (int i = 0; i < n; i++) {
-                System.out.print("BT" + (i + 1) + ": ");
-                bt[i] = sc.nextInt();
-                if (bt[i] == 0) {
-                    valid = false;
-                }
+                //System.out.print("BT" + (i + 1) + ": ");
+                //bt[i] = sc.nextInt();
+                //if (bt[i] == 0) {
+                //    valid = false;
+                //}
+                do {
+                    System.out.print("BT" + (i + 1) + ": ");
+                    bt[i] = sc.nextInt();
+                    valid = bt[i] > 0;
+                    if (!valid) {
+                        System.out.println("Invalid Input. Input  nonzero number");
+                    }
+                } while (!valid);
+
             }
 
-            if (valid) {
                 switch (chosenAlgo) {
                     case 'A':
                         int st = 0,
@@ -175,7 +183,7 @@ public class NonPreemptiveScheduling {
                         System.out.println("Gantt Chart: [START] | " + gantt + "| [END]");
                         System.out.println(completion);
                         System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
-
+                        completion = "";
                         gantt = "";
                         break;
 
@@ -264,9 +272,6 @@ public class NonPreemptiveScheduling {
                         System.err.println("Unrecognized option");
                         break;
                 }
-            }
-            else
-                System.out.println("0 is an invalid burst time.");
 
             System.out.print("Input again? (Y/N): ");
 
