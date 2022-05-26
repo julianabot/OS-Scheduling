@@ -17,7 +17,6 @@ class ProcessSJF {
         this.wt = wt;
         this.tat = tat;
     }
-
 }
 
 public class NonPreemptiveScheduling {
@@ -126,51 +125,24 @@ public class NonPreemptiveScheduling {
                         ProcessSJF temp = new ProcessSJF(pid[i], at[i], bt[i], wt[i], ta[i]);
                         arr.add(temp);
                     }
-
-                    Collections.sort(arr, new Comparator<ProcessSJF>() {
-                        public int compare(ProcessSJF e1, ProcessSJF e2) {
-                            return Integer.compare(e1.art, e2.art);
-                        }
-                    });
-
-                    ArrayList<ProcessSJF> arrbt = new ArrayList<ProcessSJF>(n - 1);
-
-                    for (int i = 1; i < n; i++) {
-                        ProcessSJF temp = new ProcessSJF(arr.get(i).pid, arr.get(i).art, arr.get(i).bt, arr.get(i).wt, arr.get(i).tat);
-                        arrbt.add(temp);
-                    }
-
-                    Collections.sort(arrbt, new Comparator<ProcessSJF>() {
-                        public int compare(ProcessSJF e1, ProcessSJF e2) {
-                            return Integer.compare(e1.bt, e2.bt);
-                        }
-                    });
-
+                    
                     System.out.println("Processes "
                             + " Arrival Time "
                             + " Burst Time "
                             + " Turnaround Time "
                             + " Waiting Time ");
 
-                    for (int i = 0; i < n - 1; i++) {
-                        if (i == 0) {
-                            avgwt += arr.get(i).wt;
-                            avgta += arr.get(i).tat;
-                            System.out.println(" P" + arr.get(i).pid + "\t\t" + arr.get(i).art + "\t\t" + arr.get(i).bt + "\t\t" + arr.get(i).tat + "\t\t" + arr.get(i).wt);
-                        }
-                        avgwt += arrbt.get(i).wt;
-                        avgta += arrbt.get(i).tat;
-                        System.out.println(" P" + arrbt.get(i).pid + "\t\t" + arrbt.get(i).art + "\t\t" + arrbt.get(i).bt + "\t\t" + arrbt.get(i).tat + "\t\t" + arrbt.get(i).wt);
+                    for (int i = 0; i < n; i++) {
+                        avgwt += arr.get(i).wt;
+                        avgta += arr.get(i).tat;
+                        System.out.println(" P" + arr.get(i).pid + "\t\t" + arr.get(i).art + "\t\t" + arr.get(i).bt + "\t\t" + arr.get(i).tat + "\t\t" + arr.get(i).wt);
                     }
 
                     System.out.println("Average Waiting Time = " + (float) (avgwt / n));
                     System.out.println("Average Turnaround Time = " + (float) (avgta / n));
-
-                    for (int i = 0; i < n - 1; i++) {
-                        if (i == 0) {
-                            gantt = gantt + "P" + arr.get(i).pid + " | ";
-                        }
-                        gantt = gantt + "P" + arrbt.get(i).pid + " | ";
+                    
+                    for (int i = 0; i < n; i++) {
+                        gantt = gantt + "P" + arr.get(i).pid + " | ";
                     }
 
                     gantt = gantt.substring(0, gantt.length() - 2);
