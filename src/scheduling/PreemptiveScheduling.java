@@ -119,6 +119,12 @@ public class PreemptiveScheduling {
                 for (int i = 1; i <= processNum; i++) {
                     burstTimePPrio[i - 1] = burstTime.get(i - 1);
                 }
+                
+                int processID[] = new int[processNum];
+                for (int i = 0; i < processNum; i++) {
+                    processID[i] = i + 1;
+                }
+
                 //Creates an array to accept list of priorities if P-Prio is chosen
                 int priority[] = new int[processNum + 1];
                 int x[] = new int[processNum];
@@ -163,23 +169,39 @@ public class PreemptiveScheduling {
 
                     //sets a high number for priority numbers in order to account for any combination
                     priority[processNum] = 10000;
-
+                    
+                    //creates a array lists used by the Gantt Chart
+                    ArrayList<Integer> completionTimesOutput = new ArrayList<>();
+                    ArrayList<Integer> ganttOutput = new ArrayList<>();
+                    
                     for (time = 0; count != processNum; time++) {
                         smallest = processNum;
                         for (i = 0; i < processNum; i++) {
                             //sets the smallest (index) value to the array index with the least value
-                            if (priority[i] < priority[smallest] && burstTimePPrio[i] > 0) {
+                            if (arrivalTimePPrio[i] <= time && priority[i] < priority[smallest] && burstTimePPrio[i] > 0) {
                                 smallest = i;
                             }
                         }
 
                         burstTimePPrio[smallest]--;
+                        
+                        if (arrivalTimePPrio[smallest] == time) {
+                            completionTimesOutput.add(time);
+                            if (burstTimePPrio[smallest] != 0) {
+                                ganttOutput.add(processID[smallest]);
+                            }
+                        }
+
                         if (burstTimePPrio[smallest] == 0) {
                             count++;
                             end = time + 1;
-                            completionTimePPrio[smallest] = end + 1;
-                            waitingTimePPrio[smallest] = end - arrivalTimePPrio[smallest] - x[smallest] + 1;
-                            turnaroundTimePPrio[smallest] = end - arrivalTimePPrio[smallest] + 1;
+                            completionTimePPrio[smallest] = end;
+                            completionTimesOutput.add(completionTimePPrio[smallest]);
+                            if (ganttOutput.get(ganttOutput.size() - 1) != processID[smallest]) {
+                                ganttOutput.add(processID[smallest]);
+                            }
+                            waitingTimePPrio[smallest] = end - arrivalTimePPrio[smallest] - x[smallest];
+                            turnaroundTimePPrio[smallest] = end - arrivalTimePPrio[smallest];
                         }
                     }
 
@@ -193,6 +215,24 @@ public class PreemptiveScheduling {
 
                     System.out.println("Average waiting time = " + (avg / processNum));
                     System.out.println("Average turnaround time = " + (tt / processNum));
+                    
+                    //creating P-Prio Gantt Chart
+                    System.out.println("___________________________________________________________________");
+                    System.out.print("[START]  |");
+                    for (j = 0; j < ganttOutput.size(); j++) {
+                        System.out.print("  P" + ganttOutput.get(j) + "   |");
+                    }
+                    System.out.print("[END]");
+                    
+                    System.out.println("");
+                    
+                    for (j = 0; j < completionTimesOutput.size(); j++) {
+                        System.out.print("\t" + completionTimesOutput.get(j));
+                    }
+                    
+                    System.out.println("");
+                    
+                    System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
 
                     //end of P-Prio
                 } else {
