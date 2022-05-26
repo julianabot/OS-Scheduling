@@ -39,6 +39,7 @@ public class NonPreemptiveScheduling {
         char chooseContinue;
         char chosenAlgo;
         String gantt = "";
+        String completion = "";
         int n;
         do {
             display_menu();
@@ -237,11 +238,25 @@ public class NonPreemptiveScheduling {
                         gantt = gantt + "P" + pid[i] + " | ";
                     }
 
+                    for (int i = 0; i < n; i++) {
+                        if (i == 0) {
+                            completion = completion + "\t\t     " + at[i] + "    ";
+                        }
+                        if (String.valueOf(ct[i]).length() == 1) {
+                            completion = completion + ct[i] + "    ";
+                        } else if (String.valueOf(ct[i]).length() == 2) {
+                            completion = completion + ct[i] + "   ";
+                        } else if (String.valueOf(ct[i]).length() == 3) {
+                            completion = completion + ct[i] + "  ";
+                        }
+                    }
+
                     gantt = gantt.substring(0, gantt.length() - 2);
                     System.out.println("____________________________________________________________");
-                    System.out.println("Gantt Chart: [START] " + gantt + " [END]");
+                    System.out.println("Gantt Chart: [START] | " + gantt + "| [END]");
+                    System.out.println(completion);
                     System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
-
+                    completion = "";
                     gantt = "";
 
                     break;
