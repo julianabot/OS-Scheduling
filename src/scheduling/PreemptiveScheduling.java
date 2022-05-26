@@ -60,7 +60,7 @@ public class PreemptiveScheduling {
             do {
                 System.out.println("Preemptive Scheduling Algorithms");
                 System.out.println("[A] Shortest Job First (SJF)");
-                System.out.println("[B] Round Robin (RR)");
+                System.out.println("[B] Preemptive Priority (P-Prio)");
                 System.out.println("[C] Exit");
                 System.out.print("Compute for: ");
                 inputAlgo = keyboard.next().charAt(0);
@@ -72,7 +72,7 @@ public class PreemptiveScheduling {
                         System.out.println("Shortest Job First (SJF)");
                         break;
                     case 'B':
-                        System.out.println("Round Robin (RR)");
+                        System.out.println("Preemptive Priority (P-Prio)");
                         break;
                 }
                 if (inputAlgo == 'C') {
@@ -103,30 +103,25 @@ public class PreemptiveScheduling {
                     burstTime.add(inputBurst);
                 }
 
-                //puts the input into the array to be used in the computation of SJF
+                //Puts the input into the array to be used in the computation of SJF
                 Process proc[] = {};
                 for (int i = 1; i <= processNum; i++) {
                     proc = Arrays.copyOf(proc, proc.length + 1);
                     proc[proc.length - 1] = new Process(i, burstTime.get(i - 1), arrivalTime.get(i - 1));
                 }
 
-                //puts the input into the array to be used in the computation of RR
-                int n, tq, timer = 0, maxProccessIndex = 0;
-                float avgWait = 0, avgTT = 0;
-                int arrival[] = new int[processNum];
-                int burst[] = new int[processNum];
-                int wait[] = new int[processNum];
-                int turn[] = new int[processNum];
-                int queue[] = new int[processNum];
-                int temp_burst[] = new int[processNum];
-                boolean complete[] = new boolean[processNum];
+                //Puts the input into the array to be used in the computation of P-Prio
+                int arrivalTimePPrio[] = new int[processNum];
                 for (int i = 1; i <= processNum; i++) {
-                    arrival[i - 1] = arrivalTime.get(i - 1);
+                    arrivalTimePPrio[i - 1] = arrivalTime.get(i - 1);
                 }
+                int burstTimePPrio[] = new int[processNum];
                 for (int i = 1; i <= processNum; i++) {
-                    burst[i - 1] = burstTime.get(i - 1);
-                    temp_burst[i - 1] = burst[i - 1];
+                    burstTimePPrio[i - 1] = burstTime.get(i - 1);
                 }
+                //Creates an array to accept list of priorities if P-Prio is chosen
+                int priority[] = new int[processNum + 1];
+                int x[] = new int[processNum];
 
                 //Redirects to methods for chosen algorithms
                 if (chosenAlgo != 'A' && chosenAlgo != 'B' && chosenAlgo != 'C') {
@@ -135,84 +130,71 @@ public class PreemptiveScheduling {
                     //Shortest Job First chosen
                     SJFfindavgTime(proc, proc.length);
                 } else if (chosenAlgo == 'B') {
-                    //Round Robin Chosen
-                    System.out.print("Enter quantum number: ");
-                    tq = keyboard.nextInt();
-
-                    while (timer < arrival[0]) //Incrementing Timer until the first process arrives
-                    {
-                        timer++;
+                    //Preemptive Priority Chosen
+                    System.out.println("Input individual priority number");
+                    
+                    //Accepts input for individual priorities
+                    for (int i = 1; i <= processNum; i++) {
+                        System.out.print("Prio" + i + ": ");
+                        int inputPrio = keyboard.nextInt();
+                        priority[i - 1] = inputPrio;
                     }
-                    queue[0] = 1;
 
-                    while (true) {
-                        boolean flag = true;
-                        for (int i = 0; i < processNum; i++) {
-                            if (temp_burst[i] != 0) {
-                                flag = false;
-                                break;
+                    int waitingTimePPrio[] = new int[processNum]; //Array to store waiting time
+                    int turnaroundTimePPrio[] = new int[processNum]; //Array to store turnaround time
+                    int completionTimePPrio[] = new int[processNum]; //Array to store completion time
+
+                    int i, j, smallest, count = 0, time; 
+                    //count pertains to the number of processes completed
+                    //smallest pertains to the index of the array item with the smallest value
+                    //i and j are initialized for the for loops
+                    //time pertains to the time consumed by the process
+                    
+                    double avg = 0, tt = 0;
+                    //avg is initialized to hold the computed waiting time
+                    
+                    int end;
+                    //end is initialized for the computation using a incremented time value
+
+                    //populates the x array with values from the burst time array
+                    for (i = 0; i < processNum; i++) {
+                        x[i] = burstTimePPrio[i];
+                    }
+
+                    //sets a high number for priority numbers in order to account for any combination
+                    priority[processNum] = 10000;
+
+                    for (time = 0; count != processNum; time++) {
+                        smallest = processNum;
+                        for (i = 0; i < processNum; i++) {
+                            //sets the smallest (index) value to the array index with the least value
+                            if (priority[i] < priority[smallest] && burstTimePPrio[i] > 0) {
+                                smallest = i;
                             }
                         }
-                        if (flag) {
-                            break;
-                        }
-
-                        for (int i = 0; (i < processNum) && (queue[i] != 0); i++) {
-                            int ctr = 0;
-                            while ((ctr < tq) && (temp_burst[queue[0] - 1] > 0)) {
-                                temp_burst[queue[0] - 1] -= 1;
-                                timer += 1;
-                                ctr++;
-
-                                //Updating the ready queue until all the processes arrive
-                                checkNewArrival(timer, arrival, processNum, maxProccessIndex, queue);
-                            }
-                            if ((temp_burst[queue[0] - 1] == 0) && (complete[queue[0] - 1] == false)) {
-                                turn[queue[0] - 1] = timer;        //turn currently stores exit times
-                                complete[queue[0] - 1] = true;
-                            }
-
-                            //checks whether or not CPU is idle
-                            boolean idle = true;
-                            if (queue[processNum - 1] == 0) {
-                                for (int k = 0; k < processNum && queue[k] != 0; k++) {
-                                    if (complete[queue[k] - 1] == false) {
-                                        idle = false;
-                                    }
-                                }
-                            } else {
-                                idle = false;
-                            }
-
-                            if (idle) {
-                                timer++;
-                                checkNewArrival(timer, arrival, processNum, maxProccessIndex, queue);
-                            }
-
-                            //Maintaining the entries of processes after each premption in the ready Queue
-                            queueMaintainence(queue, processNum);
+                        
+                        burstTimePPrio[smallest]--;
+                        if (burstTimePPrio[smallest] == 0) {
+                            count++;
+                            end = time + 1;
+                            completionTimePPrio[smallest] = end + 1;
+                            waitingTimePPrio[smallest] = end - arrivalTimePPrio[smallest] - x[smallest] + 1;
+                            turnaroundTimePPrio[smallest] = end - arrivalTimePPrio[smallest] + 1;
                         }
                     }
 
-                    for (int i = 0; i < processNum; i++) {
-                        turn[i] = turn[i] - arrival[i];
-                        wait[i] = turn[i] - burst[i];
+                    System.out.println("Process\tBurst-time\tarrival-time\twaiting-time\tturnaround-time\tcompletion-time\tpriority");
+
+                    for (i = 0; i < processNum; i++) {
+                        System.out.println("p" + (i + 1) + "\t\t" + x[i] + "\t\t" + arrivalTimePPrio[i] + "\t\t" + waitingTimePPrio[i] + "\t\t" + turnaroundTimePPrio[i] + "\t\t" + completionTimePPrio[i] + "\t\t" + priority[i]);
+                        avg = avg + waitingTimePPrio[i];
+                        tt = tt + turnaroundTimePPrio[i];
                     }
 
-                    System.out.print("\nProgram No.\tArrival Time\tBurst Time\tWait Time\tTurnAround Time"
-                            + "\n");
-                    for (int i = 0; i < processNum; i++) {
-                        System.out.print(i + 1 + "\t\t" + arrival[i] + "\t\t" + burst[i]
-                                + "\t\t" + wait[i] + "\t\t" + turn[i] + "\n");
-                    }
-                    for (int i = 0; i < processNum; i++) {
-                        avgWait += wait[i];
-                        avgTT += turn[i];
-                    }
-                    System.out.print("\nAverage wait time : " + (avgWait / processNum)
-                            + "\nAverage Turn Around Time : " + (avgTT / processNum));
-
-                    //end of RR
+                    System.out.println("Average waiting time = " + (avg / processNum));
+                    System.out.println("Average turnaround time = " + (tt / processNum));
+                    
+                    //end of P-Prio
                 } else {
                     System.out.println("End of program.");
                 }
@@ -358,145 +340,4 @@ public class PreemptiveScheduling {
         return;
     }
 
-    //computation methods for RR
-//    static void RRfindWaitingTime(int processes[], int n,
-//            int bt[], int wt[], int quantum) {
-//        // Make a copy of burst times bt[] to store remaining
-//        // burst times.
-//        int rem_bt[] = new int[n];
-//        for (int i = 0; i < n; i++) {
-//            rem_bt[i] = bt[i];
-//        }
-//
-//        int t = 0; // Current time
-//
-//        // Keep traversing processes in round robin manner
-//        // until all of them are not done.
-//        while (true) {
-//            boolean done = true;
-//
-//            // Traverse all processes one by one repeatedly
-//            for (int i = 0; i < n; i++) {
-//                // If burst time of a process is greater than 0
-//                // then only need to process further
-//                if (rem_bt[i] > 0) {
-//                    done = false; // There is a pending process
-//
-//                    if (rem_bt[i] > quantum) {
-//                        // Increase the value of t i.e. shows
-//                        // how much time a process has been processed
-//                        t += quantum;
-//
-//                        // Decrease the burst_time of current process
-//                        // by quantum
-//                        rem_bt[i] -= quantum;
-//                    } // If burst time is smaller than or equal to
-//                    // quantum. Last cycle for this process
-//                    else {
-//                        // Increase the value of t i.e. shows
-//                        // how much time a process has been processed
-//                        t = t + rem_bt[i];
-//
-//                        // Waiting time is current time minus time
-//                        // used by this process
-//                        wt[i] = t - bt[i];
-//
-//                        // As the process gets fully executed
-//                        // make its remaining burst time = 0
-//                        rem_bt[i] = 0;
-//                    }
-//                }
-//            }
-//
-//            // If all processes are done
-//            if (done == true) {
-//                break;
-//            }
-//        }
-//    }
-//
-//    // Method to calculate turn around time
-//    static void RRfindTurnAroundTime(int processes[], int n,
-//            int bt[], int wt[], int tat[]) {
-//        // calculating turnaround time by adding
-//        // bt[i] + wt[i]
-//        for (int i = 0; i < n; i++) {
-//            tat[i] = bt[i] + wt[i];
-//        }
-//    }
-//
-//    // Method to calculate average time
-//    static void RRfindavgTime(int processes[], int n, int bt[],
-//            int quantum) {
-//        int wt[] = new int[n], tat[] = new int[n];
-//        int total_wt = 0, total_tat = 0;
-//
-//        // Function to find waiting time of all processes
-//        RRfindWaitingTime(processes, n, bt, wt, quantum);
-//
-//        // Function to find turn around time for all processes
-//        RRfindTurnAroundTime(processes, n, bt, wt, tat);
-//
-//        // Display processes along with all details
-//        System.out.println("Processes "
-//                + " Burst time "
-//                + " Waiting time "
-//                + " Turn around time");
-//
-//        // Calculate total waiting time and total turn
-//        // around time
-//        for (int i = 0; i < n; i++) {
-//            total_wt = total_wt + wt[i];
-//            total_tat = total_tat + tat[i];
-//            System.out.println(" " + (i + 1) + "\t\t" + bt[i] + "\t "
-//                    + wt[i] + "\t\t " + tat[i]);
-//        }
-//
-//        System.out.println("Average waiting time = "
-//                + (float) total_wt / (float) n);
-//        System.out.println("Average turn around time = "
-//                + (float) total_tat / (float) n);
-//        return;
-//    }
-    //code methods for RR
-    public static void queueUpdation(int queue[], int timer, int arrival[], int n, int maxProccessIndex) {
-        int zeroIndex = -1;
-        for (int i = 0; i < n; i++) {
-            if (queue[i] == 0) {
-                zeroIndex = i;
-                break;
-            }
-        }
-        if (zeroIndex == -1) {
-            return;
-        }
-        queue[zeroIndex] = maxProccessIndex + 1;
-    }
-
-    public static void checkNewArrival(int timer, int arrival[], int n, int maxProccessIndex, int queue[]) {
-        if (timer <= arrival[n - 1]) {
-            boolean newArrival = false;
-            for (int j = (maxProccessIndex + 1); j < n; j++) {
-                if (arrival[j] <= timer) {
-                    if (maxProccessIndex < j) {
-                        maxProccessIndex = j;
-                        newArrival = true;
-                    }
-                }
-            }
-            if (newArrival) //adds the index of the arriving process(if any)
-            {
-                queueUpdation(queue, timer, arrival, n, maxProccessIndex);
-            }
-        }
-    }
-
-    public static void queueMaintainence(int queue[], int n) {
-
-        for (int i = 0; (i < n - 1) && (queue[i + 1] != 0); i++) {
-            int temp = queue[i];
-            queue[i] = queue[i + 1];
-            queue[i + 1] = temp;
-        }
-    }
 }
