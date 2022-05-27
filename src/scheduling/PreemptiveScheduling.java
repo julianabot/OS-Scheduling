@@ -153,6 +153,9 @@ public class PreemptiveScheduling {
                 } else if (chosenAlgo == 'A') {
                     //Shortest Job First chosen
                     findavgTime(proc, proc.length);
+                    //proc[] = {};
+                    
+                    
                 } else if (chosenAlgo == 'B') {
                     //Preemptive Priority Chosen
                     System.out.println("Input individual priority number");
@@ -253,7 +256,21 @@ public class PreemptiveScheduling {
                     System.out.println("");
 
                     System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
-
+                    
+                    arrivalTimePPrio = null;
+                    burstTimePPrio = null;
+                    processID = null;
+                    priority = null;
+                    x = null;
+                    sortedArrivalTime = null;
+                    
+                    waitingTimePPrio = null;
+                    turnaroundTimePPrio = null;
+                    completionTimePPrio = null;
+                    
+                    completionTimesOutput.clear();
+                    ganttOutput.clear();
+                    cleanCompletionTimesOutput.clear();
                     //end of P-Prio
                 } else {
                     System.out.println("End of program.");
@@ -264,14 +281,16 @@ public class PreemptiveScheduling {
             if (inputAlgo == 'C') {
                 break;
             }
+            
+            arrivalTime.clear();
+            burstTime.clear();
+
             System.out.print("Input again? (Y/N): ");
             chooseContinue = Character.toUpperCase(keyboard.next().charAt(0));
 
             if (chooseContinue != 'Y' && chooseContinue != 'N') {
                 System.out.println("Invalid input. Program will now be terminated");
             }
-            
-            
             
         } while (chooseContinue == 'Y');
 
@@ -441,12 +460,13 @@ public class PreemptiveScheduling {
             System.out.print("\t" + cleanCompletionTimesOutput.get(j));
         }
         
-        
         System.out.println("");
 
         System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
 
-        
+        completionTimesOutput.clear();
+        ganttOutput.clear();
+        cleanCompletionTimesOutput.clear();
         
         return;
     }
@@ -454,7 +474,6 @@ public class PreemptiveScheduling {
     //method to resolve duplicates in the gantt output
     public static <T> ArrayList<T> removeDuplicates(ArrayList<T> list)
     {
-  
         // Create a new ArrayList
         ArrayList<T> newList = new ArrayList<T>();
   
@@ -468,9 +487,7 @@ public class PreemptiveScheduling {
                 newList.add(element);
             }
         }
-  
         // return the new list
         return newList;
     }
-
 }
