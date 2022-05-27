@@ -66,7 +66,7 @@ public class PreemptiveScheduling {
                 inputAlgo = keyboard.next().charAt(0);
                 chosenAlgo = Character.toUpperCase(inputAlgo);
 
-                System.out.println("------------------------------------------------------------");
+                System.out.println("---------------------------------------------------------------------------------------");
                 switch (chosenAlgo) {
                     case 'A':
                         System.out.println("Shortest Job First (SJF)");
@@ -237,7 +237,7 @@ public class PreemptiveScheduling {
                     System.out.println("Average turnaround time = " + (tt / processNum));
 
                     //creating P-Prio Gantt Chart
-                    System.out.println("___________________________________________________________________");
+                    System.out.println("_______________________________________________________________________________________");
                     System.out.print("[START]  |");
                     for (j = 0; j < ganttOutput.size(); j++) {
                         System.out.print("  P" + ganttOutput.get(j) + "   |");
@@ -252,7 +252,7 @@ public class PreemptiveScheduling {
 
                     System.out.println("");
 
-                    System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
+                    System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
 
                     //end of P-Prio
                 } else {
@@ -405,7 +405,7 @@ public class PreemptiveScheduling {
         //Gantt Chart
         ArrayList<Integer>cleanCompletionTimesOutput = removeDuplicates(completionTimesOutput);
         
-        System.out.println("___________________________________________________________________");
+        System.out.println("_______________________________________________________________________________________");
         System.out.print("[START]  |");
         for (int j = 0; j < ganttOutput.size(); j++) {
             System.out.print("  P" + ganttOutput.get(j) + "   |");
@@ -420,7 +420,8 @@ public class PreemptiveScheduling {
 
         System.out.println("");
 
-        System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
+        System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
+
         
         
         return;

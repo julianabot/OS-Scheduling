@@ -140,7 +140,7 @@ public class DiskScheduling {
     static void aCSCAN(int arr[], int head, int size, int disk_size) {
         int seek_count = 0;
         int distance, cur_track;
-
+        int fhead = head;
         Vector<Integer> left = new Vector<Integer>();
         Vector<Integer> right = new Vector<Integer>();
         Vector<Integer> seek_sequence = new Vector<Integer>();
@@ -221,7 +221,7 @@ public class DiskScheduling {
         System.out.println("Average Seek Time: " + seek_time);
 
         System.out.println("_______________________________________________________________________________________");
-        System.out.print("Seek Sequence: [START] → " + head + " →");
+        System.out.print("Seek Sequence: [START] → " + fhead + " →");
         for (int i = 0; i < seek_sequence.size(); i++) {
             System.out.print(" " + seek_sequence.get(i) + " →");
         }
@@ -234,6 +234,7 @@ public class DiskScheduling {
     static void aCLOOK(int arr[], int head, int size, int disk_size) {
         int seek_count = 0;
         int distance, cur_track;
+        int fhead = head;
 
         Vector<Integer> left = new Vector<Integer>();
         Vector<Integer> right = new Vector<Integer>();
@@ -308,7 +309,7 @@ public class DiskScheduling {
         System.out.println("Total head movement: " + seek_count);
         System.out.println("Seek Time: " + seek_time);
         System.out.println("_______________________________________________________________________________________");
-        System.out.print("Seek Sequence: [START] → " + head + " →");
+        System.out.print("Seek Sequence: [START] → " + fhead + " →");
         for (int i = 0; i < seek_sequence.size(); i++) {
             System.out.print(" " + seek_sequence.get(i) + " →");
         }
@@ -319,8 +320,9 @@ public class DiskScheduling {
 
 // Driver code
     public static void main(String[] args) {
-
+        
         char chosenAlgo;
+        char inputAlgo;
         char chooseContinue;
         int size;
         int tsize;
@@ -335,9 +337,17 @@ public class DiskScheduling {
                 System.out.println("[C] Circular Scan (CSCAN)");
                 System.out.println("[D] Circular Look (CLOOK)");
                 System.out.println("[E] Exit");
-                System.out.print("Compute for: ");
-                char inputAlgo = sc.next().charAt(0);
-                chosenAlgo = Character.toUpperCase(inputAlgo);
+                
+                do{
+                    System.out.print("Compute for: ");
+                    inputAlgo = sc.next().charAt(0);
+                    chosenAlgo = Character.toUpperCase(inputAlgo);
+                    
+                    if(chosenAlgo != 'A' && chosenAlgo != 'B' && chosenAlgo != 'C' && chosenAlgo != 'D' && chosenAlgo != 'E'){
+                         System.out.println("Invalid input. Please select a valid input from the example above.");
+                    }
+                  } while(chosenAlgo != 'A' && chosenAlgo != 'B' && chosenAlgo != 'C' && chosenAlgo != 'D' && chosenAlgo != 'E');
+                    
                 
                 if (chosenAlgo == 'E') {
                     System.out.println("End of program.");

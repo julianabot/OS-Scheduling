@@ -206,10 +206,10 @@ public class NonPreemptiveScheduling {
                             }
                         }
 
-                        System.out.println("____________________________________________________________");
+                        System.out.println("_______________________________________________________________________________________");
                         System.out.println("Gantt Chart: [START] | " + gantt + "| [END]");
                         System.out.println(completion);
-                        System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
+                        System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
                         completion = "";
                         gantt = "";
                         break;
@@ -284,10 +284,10 @@ public class NonPreemptiveScheduling {
                         }
 
                         gantt = gantt.substring(0, gantt.length() - 2);
-                        System.out.println("____________________________________________________________");
+                        System.out.println("_______________________________________________________________________________________");
                         System.out.println("Gantt Chart: [START] | " + gantt + "| [END]");
                         System.out.println(completion);
-                        System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
+                        System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
                         completion = "";
                         gantt = "";
 

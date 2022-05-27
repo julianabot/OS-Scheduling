@@ -11,7 +11,7 @@ public class OSScheduling {
         Scanner sc = new Scanner(System.in);
         do {
             do {
-                System.out.println("============================================================");
+                System.out.println("=======================================================================================");
                 System.out.println("Scheduling Algorithms");
                 System.out.println("[A] Preemptive Scheduling");
                 System.out.println("[B] Non-Preemptive Scheduling");
@@ -21,7 +21,7 @@ public class OSScheduling {
                 chosenAlgo = sc.next().charAt(0);
                 chosenAlgo = Character.toUpperCase(chosenAlgo);
 
-                System.out.println("============================================================");
+                System.out.println("=======================================================================================");
 
                 if (chosenAlgo != 'A' && chosenAlgo != 'B' && chosenAlgo != 'C' && chosenAlgo != 'D') {
                     System.out.println("Invalid input. Please select a valid input from the choices above.");
@@ -37,7 +37,7 @@ public class OSScheduling {
                 } else {
                     System.out.println("Invalid Input. ");
                 }
-                System.out.println("============================================================");
+                System.out.println("=======================================================================================");
 
             } while (chosenAlgo != 'A' && chosenAlgo != 'B' && chosenAlgo != 'C');
 
