@@ -235,7 +235,7 @@ public class NonPreemptiveScheduling {
                                 }
                             }
                         }
-
+                         
                         // finding completion times
                         for (int i = 0; i < n; i++) {
                             if (i == 0) {
@@ -247,10 +247,10 @@ public class NonPreemptiveScheduling {
                                     ct[i] = ct[i - 1] + bt[i];
                                 }
                             }
-                            ta[i] = ct[i] - at[i];        // turnaround time= completion time- arrival time
-                            wt[i] = ta[i] - bt[i];        // waiting time= turnaround time- burst time
-                            avgwt += wt[i];               // total waiting time
-                            avgta += ta[i];               // total turnaround time
+                            ta[i] = ct[i] - at[i];                              // turnaround time= completion time- arrival time
+                            wt[i] = ta[i] - bt[i];                              // waiting time= turnaround time- burst time
+                            avgwt += wt[i];                                     // total waiting time
+                            avgta += ta[i];                                     // total turnaround time
                         }
 
                         System.out.println("Processes "
