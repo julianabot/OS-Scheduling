@@ -41,34 +41,38 @@ public class NonPreemptiveScheduling {
         char chosenAlgo;
         String gantt = "";
         String completion = "";
-
         int n;
+        boolean notvalidint = true;
         do {
-            display_menu();
-            chosenAlgo = sc.next().charAt(0);
-            chosenAlgo = Character.toUpperCase(chosenAlgo);
-
-            System.out.println("------------------------------------------------------------");
-            switch (chosenAlgo) {
-                case 'A':
-                    System.out.println("Shortest Job First (SJF)");
-                    break;
-                case 'B':
-                    System.out.println("First Come First Serve (FCSF)");
-                    break;
-            }
-            if (chosenAlgo == 'C') {
-                System.out.println("End of program.");
-                break;
-            }
-
-            do {
-                System.out.print("Input no. of processes [2-9]: ");
-                n = sc.nextInt();
-                if (n > 9 || n < 2) {
-                    System.out.println("Invalid value. Please choose a number between 2 and 9");
+            do{
+                display_menu();
+                chosenAlgo = sc.next().charAt(0);
+                chosenAlgo = Character.toUpperCase(chosenAlgo);
+                
+                System.out.println("------------------------------------------------------------");
+                switch (chosenAlgo) {
+                    case 'A':
+                        System.out.println("Shortest Job First (SJF)");
+                        break;
+                    case 'B':
+                        System.out.println("First Come First Serve (FCSF)");
+                        break;
                 }
-            } while (n > 9 || n < 2);
+                if (chosenAlgo == 'C') {
+                    System.out.println("End of program.");
+                    System.exit(0);
+                }
+                if(chosenAlgo < 'A' || chosenAlgo >'C'){
+                     System.out.println("Invalid input. Please choose between the given choices.");
+                }
+            }while (chosenAlgo < 'A' || chosenAlgo >'C');
+                do {
+                    System.out.print("Input no. of processes [2-9]: ");
+                    n = sc.nextInt();
+                    if (n > 9 || n < 2 ) {
+                        System.out.println("Invalid value. Please choose a number between 2 and 9");
+                    }
+                } while (n > 9 || n < 2);
 
             int pid[] = new int[n];
             int at[] = new int[n];
@@ -79,10 +83,23 @@ public class NonPreemptiveScheduling {
             int f[] = new int[n];
 
             for (int i = 0; i < n; i++) {
-                System.out.print("AT" + (i + 1) + ": ");
-                at[i] = sc.nextInt();
-                pid[i] = i + 1;
-                f[i] = 0;
+                do{
+                  
+                    try{
+                        System.out.print("AT" + (i + 1) + ": ");
+                        at[i] = sc.nextInt();
+                        pid[i] = i + 1;
+                        f[i] = 0;
+                        notvalidint = false;
+                    }
+                    catch(InputMismatchException e){
+                        sc.next();
+                        System.out.println("Invalid input. Please enter an integer.");
+                        notvalidint = true;
+                        
+                    }
+                }while(notvalidint);
+               
             }
 
             //to check if there is a 0 burst time
@@ -95,15 +112,25 @@ public class NonPreemptiveScheduling {
                 //if (bt[i] == 0) {
                 //    valid = false;
                 //}
-                do {
-                    System.out.print("BT" + (i + 1) + ": ");
-                    bt[i] = sc.nextInt();
-                    valid = bt[i] > 0;
-                    if (!valid) {
-                        System.out.println("Invalid Input. Input  nonzero number");
+                do{
+                    try{
+                        do {
+                                System.out.print("BT" + (i + 1) + ": ");
+                                bt[i] = sc.nextInt();
+                                valid = bt[i] > 0;
+                                if (!valid) {
+                                    System.out.println("Invalid Input. Input  nonzero number");
+                                }
+                        } while (!valid);
+                        notvalidint = false;
                     }
-                } while (!valid);
-
+                    catch(InputMismatchException e){
+                        sc.next();
+                        System.out.println("Invalid input. Please enter an integer.");
+                        notvalidint = true;
+                        
+                    }
+                }while(notvalidint);
             }
 
                 switch (chosenAlgo) {
