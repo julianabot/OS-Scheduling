@@ -139,9 +139,7 @@ public class PreemptiveScheduling {
                     for (int k = i + 1; k < sortedArrivalTime.length; k++) {
                         if (sortedArrivalTime[i] > sortedArrivalTime[k]) {      //swap elements if not in order
                             tempArrival = sortedArrivalTime[i];
-
                             sortedArrivalTime[i] = sortedArrivalTime[k];
-
                             sortedArrivalTime[k] = tempArrival;
                         }
                     }
@@ -172,10 +170,6 @@ public class PreemptiveScheduling {
                     int completionTimePPrio[] = new int[processNum]; //Array to store completion time
 
                     int i, j, smallest, count = 0, time;
-                    //count pertains to the number of processes completed
-                    //smallest pertains to the index of the array item with the smallest value
-                    //i and j are initialized for the for loops
-                    //time pertains to the time consumed by the process
 
                     double avg = 0, tt = 0;
                     //avg is initialized to hold the computed waiting time
@@ -228,10 +222,10 @@ public class PreemptiveScheduling {
                     
                     ArrayList<Integer>cleanCompletionTimesOutput = removeDuplicates(completionTimesOutput);
 
-                    System.out.println("Process\tBurst-time\tarrival-time\twaiting-time\tturnaround-time\tcompletion-time\tpriority");
+                    System.out.println("Processes\tBurst Time\tArrival Time\tPriority\tWaiting Time\tTurnaround Time");
 
                     for (i = 0; i < processNum; i++) {
-                        System.out.println("p" + (i + 1) + "\t\t" + x[i] + "\t\t" + arrivalTimePPrio[i] + "\t\t" + waitingTimePPrio[i] + "\t\t" + turnaroundTimePPrio[i] + "\t\t" + completionTimePPrio[i] + "\t\t" + priority[i]);
+                        System.out.println("P" + (i + 1) + "\t\t" + x[i] + "\t\t" + arrivalTimePPrio[i] + "\t\t" + priority[i] + "\t\t" + waitingTimePPrio[i] + "\t\t" + turnaroundTimePPrio[i]);
                         avg = avg + waitingTimePPrio[i];
                         tt = tt + turnaroundTimePPrio[i];
                     }
@@ -316,8 +310,6 @@ public class PreemptiveScheduling {
         // Process until all processes gets completed
         while (complete != n) {
             int copyOfPrevID = 0;
-            
-            
             // Find process with minimum remaining time among the processes that arrives till the current time
             for (int j = 0; j < n; j++) {
                 if ((proc[j].art <= t)
@@ -327,9 +319,6 @@ public class PreemptiveScheduling {
                     check = true;
                 }
             }
-            
-            
-            
             if (check == false) {
                 t++;
                 continue;
@@ -353,7 +342,6 @@ public class PreemptiveScheduling {
 
             // If a process gets completely executed
             if (rt[shortest] == 0) {
-
                 // Increment complete
                 complete++;
                 check = false;
@@ -375,29 +363,21 @@ public class PreemptiveScheduling {
             }
             // Increment time
             t++;
-            
-            //System.out.println(proc[shortest].pid);
-            
             copyOfPrevID = proc[shortest].pid;
             listOfPassingIDs.add(copyOfPrevID);
-            
         }
-        
         ArrayList<Integer> newProcessQ = new ArrayList<>();
         newProcessQ.add(listOfPassingIDs.get(0));
         int j = 0;
-        
         for(int i = 0 ; i < listOfPassingIDs.size() - 1 ; i++){
             if(newProcessQ.get(j) != listOfPassingIDs.get(i + 1)){
                 newProcessQ.add(listOfPassingIDs.get(i + 1));
                 j++;
             }
         }
-        
         for(int i = 0; i < newProcessQ.size(); i++){
             ganttOutput.add(newProcessQ.get(i));
         }
-        
     }
 
     // Method to calculate turn around time
