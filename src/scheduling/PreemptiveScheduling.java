@@ -119,7 +119,7 @@ public class PreemptiveScheduling {
                 for (int i = 1; i <= processNum; i++) {
                     burstTimePPrio[i - 1] = burstTime.get(i - 1);
                 }
-                
+
                 int processID[] = new int[processNum];
                 for (int i = 0; i < processNum; i++) {
                     processID[i] = i + 1;
@@ -129,12 +129,45 @@ public class PreemptiveScheduling {
                 int priority[] = new int[processNum + 1];
                 int x[] = new int[processNum];
 
+                //sort array and process id by arrival time
+                int sortedProcessID[] = Arrays.copyOf(processID, processNum);
+                int sortedArrivalTime[] = Arrays.copyOf(arrivalTimePPrio, processNum);
+                int sortedPriority[] = Arrays.copyOf(priority, processNum);
+                int sortedBurstTime[] = Arrays.copyOf(burstTimePPrio, processNum);
+                //sorted burst time at the top
+                int tempArrival;
+                int tempID;
+                int tempBurst;
+                int tempPrio;
+
+                //sorts the input elements according to arrival time
+                for (int i = 0; i < processNum; i++) {
+                    for (int k = i + 1; k < sortedArrivalTime.length; k++) {
+                        if (sortedArrivalTime[i] > sortedArrivalTime[k]) {      //swap elements if not in order
+                            tempArrival = sortedArrivalTime[i];
+                            tempID = sortedProcessID[i];
+                            tempBurst = sortedBurstTime[i];
+                            tempPrio = sortedPriority[i];
+
+                            sortedArrivalTime[i] = sortedArrivalTime[k];
+                            sortedProcessID[i] = sortedProcessID[k];
+                            sortedBurstTime[i] = sortedBurstTime[k];
+                            sortedPriority[i] = sortedPriority[k];
+
+                            sortedArrivalTime[k] = tempArrival;
+                            sortedProcessID[k] = tempID;
+                            sortedBurstTime[k] = tempBurst;
+                            sortedPriority[k] = tempPrio;
+                        }
+                    }
+                }
+
                 //Redirects to methods for chosen algorithms
                 if (chosenAlgo != 'A' && chosenAlgo != 'B' && chosenAlgo != 'C') {
                     System.out.println("Invalid input. Please select a valid input from the example above.");
                 } else if (chosenAlgo == 'A') {
                     //Shortest Job First chosen
-                    SJFfindavgTime(proc, proc.length);
+                    findavgTime(proc, proc.length);
                 } else if (chosenAlgo == 'B') {
                     //Preemptive Priority Chosen
                     System.out.println("Input individual priority number");
@@ -169,12 +202,14 @@ public class PreemptiveScheduling {
 
                     //sets a high number for priority numbers in order to account for any combination
                     priority[processNum] = 10000;
-                    
+
                     //creates a array lists used by the Gantt Chart
                     ArrayList<Integer> completionTimesOutput = new ArrayList<>();
                     ArrayList<Integer> ganttOutput = new ArrayList<>();
-                    
-                    for (time = 0; count != processNum; time++) {
+
+
+
+                    for (time = sortedArrivalTime[0]; count != processNum; time++) {
                         smallest = processNum;
                         for (i = 0; i < processNum; i++) {
                             //sets the smallest (index) value to the array index with the least value
@@ -184,7 +219,7 @@ public class PreemptiveScheduling {
                         }
 
                         burstTimePPrio[smallest]--;
-                        
+
                         if (arrivalTimePPrio[smallest] == time) {
                             completionTimesOutput.add(time);
                             if (burstTimePPrio[smallest] != 0) {
@@ -204,6 +239,8 @@ public class PreemptiveScheduling {
                             turnaroundTimePPrio[smallest] = end - arrivalTimePPrio[smallest];
                         }
                     }
+                    
+                    ArrayList<Integer>cleanCompletionTimesOutput = removeDuplicates(completionTimesOutput);
 
                     System.out.println("Process\tBurst-time\tarrival-time\twaiting-time\tturnaround-time\tcompletion-time\tpriority");
 
@@ -215,7 +252,7 @@ public class PreemptiveScheduling {
 
                     System.out.println("Average waiting time = " + (avg / processNum));
                     System.out.println("Average turnaround time = " + (tt / processNum));
-                    
+
                     //creating P-Prio Gantt Chart
                     System.out.println("___________________________________________________________________");
                     System.out.print("[START]  |");
@@ -223,15 +260,15 @@ public class PreemptiveScheduling {
                         System.out.print("  P" + ganttOutput.get(j) + "   |");
                     }
                     System.out.print("[END]");
-                    
+
                     System.out.println("");
-                    
-                    for (j = 0; j < completionTimesOutput.size(); j++) {
-                        System.out.print("\t" + completionTimesOutput.get(j));
+
+                    for (j = 0; j < cleanCompletionTimesOutput.size(); j++) {
+                        System.out.print("\t" + cleanCompletionTimesOutput.get(j));
                     }
-                    
+
                     System.out.println("");
-                    
+
                     System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
 
                     //end of P-Prio
@@ -254,8 +291,9 @@ public class PreemptiveScheduling {
 
     }
 
-    //computation methods for SJF
-    static void findWaitingTime(Process proc[], int n, int wt[], ArrayList<Integer> gProcess, ArrayList<Integer> gTime) {
+    //computation methods for SRTF
+    //this method also computes for the gantt chart output
+    static void findWaitingTime(Process proc[], int n, int wt[], ArrayList<Integer> completionTimesOutput, ArrayList<Integer> ganttOutput) {
         int rt[] = new int[n];
 
         // Copy the burst time into rt[]
@@ -266,7 +304,7 @@ public class PreemptiveScheduling {
         int complete = 0, t = 0, minm = Integer.MAX_VALUE;
         int shortest = 0, finish_time;
         boolean check = false;
-        int i = 0;
+
         // Process until all processes gets completed
         while (complete != n) {
 
@@ -281,23 +319,21 @@ public class PreemptiveScheduling {
             }
 
             if (check == false) {
-                if (t == 0) {
-                } else if (gProcess.isEmpty()) {
-                    gProcess.add(proc[shortest].pid);
-                    gTime.add(t);
-                    i++;
-                } else if (gProcess.get(i - 1) != proc[shortest].pid) {
-                    gProcess.add(proc[shortest].pid);
-                    gTime.add(t);
-                    i++;
-                }
                 t++;
                 continue;
             }
 
             // Reduce remaining time by one
             rt[shortest]--;
-
+            if(proc[shortest].art == t){
+                
+                //completionTimesOutput.add(t);
+                if (proc[shortest].bt != 0){
+                    ganttOutput.add(proc[shortest].pid);
+                    completionTimesOutput.add(t);
+                }
+            }
+            
             // Update minimum
             minm = rt[shortest];
             if (minm == 0) {
@@ -313,6 +349,13 @@ public class PreemptiveScheduling {
 
                 // Find finish time of current process
                 finish_time = t + 1;
+                if (completionTimesOutput.get(ganttOutput.size() - 1) != finish_time){
+                    completionTimesOutput.add(finish_time);
+                } 
+                
+                if (ganttOutput.get(ganttOutput.size() - 1) != proc[shortest].pid) {
+                    ganttOutput.add(proc[shortest].pid);
+                }
 
                 // Calculate waiting time
                 wt[shortest] = finish_time
@@ -323,19 +366,10 @@ public class PreemptiveScheduling {
                     wt[shortest] = 0;
                 }
             }
-            if (gProcess.isEmpty()) {
-                gProcess.add(proc[shortest].pid);
-                gTime.add(t);
-                i++;
-            } else if (gProcess.get(i - 1) != proc[shortest].pid) {
-                gProcess.add(proc[shortest].pid);
-                gTime.add(t);
-                i++;
-            }
-
+            // Increment time
             t++;
         }
-        gTime.add(t);
+        
     }
 
     // Method to calculate turn around time
@@ -347,18 +381,15 @@ public class PreemptiveScheduling {
     }
 
     // Method to calculate average time
-    static void SJFfindavgTime(Process proc[], int n) {
+    static void findavgTime(Process proc[], int n) {
         int wt[] = new int[n], tat[] = new int[n];
         int total_wt = 0, total_tat = 0;
-
-        String gantt = "";
-        String completion = "";
-
-        ArrayList<Integer> gProcess = new ArrayList<Integer>();
-        ArrayList<Integer> gTime = new ArrayList<Integer>();
+        
+        ArrayList<Integer> completionTimesOutput = new ArrayList<>();
+        ArrayList<Integer> ganttOutput = new ArrayList<>();
 
         // Function to find waiting time of all processes
-        findWaitingTime(proc, n, wt, gProcess, gTime);
+        findWaitingTime(proc, n, wt, completionTimesOutput, ganttOutput);
 
         // Function to find turn around time for all processes
         findTurnAroundTime(proc, n, wt, tat);
@@ -366,61 +397,67 @@ public class PreemptiveScheduling {
         // Display processes along with all details
         System.out.println("Processes "
                 + " Arrival Time "
-                + " Burst time "
-                + " Turnaround time"
-                + " Waiting time "
-        );
-
-        //Arrange based on smallest burst time
-        ArrayList<Process> arranged = new ArrayList<Process>(n);
-
-        for (int i = 0; i < n; i++) {
-            Process temp = new Process(proc[i].pid, proc[i].bt, proc[i].art, wt[i], tat[i]);
-            arranged.add(temp);
-        }
-        Collections.sort(arranged, new Comparator<Process>() {
-            public int compare(Process e1, Process e2) {
-                return Integer.compare(e1.art, e2.art);
-            }
-        });
-
-        for (int i = 0; i < n; i++) {
-            System.out.println(" P" + arranged.get(i).pid + "\t\t"
-                    + arranged.get(i).art + "\t\t"
-                    + arranged.get(i).bt + "\t\t " + arranged.get(i).tat
-                    + "\t\t" + arranged.get(i).wt);
-            total_wt += arranged.get(i).wt;
-            total_tat += arranged.get(i).tat;
-        }
+                + " Burst Time "
+                + " Waiting Time "
+                + " Turn around Time");
 
         // Calculate total waiting time and total turnaround time
-        System.out.println("Average Waiting Time = "
-                + (float) total_wt / (float) n);
-        System.out.println("Average Turnaround Time = "
-                + (float) total_tat / (float) n);
-
-        for (int i = 0; i < gProcess.size(); i++) {
-            gantt = gantt + "P" + gProcess.get(i) + " | ";
+        for (int i = 0; i < n; i++) {
+            total_wt = total_wt + wt[i];
+            total_tat = total_tat + tat[i];
+            System.out.println("P" + proc[i].pid + "\t\t"
+                    + proc[i].art+ "\t\t" +
+                    + proc[i].bt + "\t\t " + wt[i]
+                    + "\t\t" + tat[i]);
         }
 
-        gantt = gantt.substring(0, gantt.length() - 2);
+        System.out.println("Average waiting time = "
+                + (float) total_wt / (float) n);
+        System.out.println("Average turn around time = "
+                + (float) total_tat / (float) n);
+        
+        //Gantt Chart
+        ArrayList<Integer>cleanCompletionTimesOutput = removeDuplicates(completionTimesOutput);
+        
+        System.out.println("___________________________________________________________________");
+        System.out.print("[START]  |");
+        for (int j = 0; j < ganttOutput.size(); j++) {
+            System.out.print("  P" + ganttOutput.get(j) + "   |");
+        }
+        System.out.print("[END]");
 
-        for (int i = 0; i < gTime.size(); i++) {
-            if (i == 0) {
-                completion = completion + "\t\t     " + gTime.get(i) + "    ";
-            } else if (String.valueOf(gTime.get(i)).length() == 1) {
-                completion = completion + gTime.get(i) + "    ";
-            } else if (String.valueOf(gTime.get(i)).length() == 2) {
-                completion = completion + gTime.get(i) + "   ";
-            } else if (String.valueOf(gTime.get(i)).length() == 3) {
-                completion = completion + gTime.get(i) + "  ";
+        System.out.println("");
+
+        for (int j = 0; j < cleanCompletionTimesOutput.size(); j++) {
+            System.out.print("\t" + cleanCompletionTimesOutput.get(j));
+        }
+
+        System.out.println("");
+
+        System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
+        return;
+    }
+    
+    //method to resolve duplicates in the gantt output
+    public static <T> ArrayList<T> removeDuplicates(ArrayList<T> list)
+    {
+  
+        // Create a new ArrayList
+        ArrayList<T> newList = new ArrayList<T>();
+  
+        // Traverse through the first list
+        for (T element : list) {
+  
+            // If this element is not present in newList
+            // then add it
+            if (!newList.contains(element)) {
+  
+                newList.add(element);
             }
         }
-        System.out.println("____________________________________________________________");
-        System.out.println("Gantt Chart: [START] | " + gantt + "| [END]");
-        System.out.println(completion);
-        System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
-        return;
+  
+        // return the new list
+        return newList;
     }
 
 }
