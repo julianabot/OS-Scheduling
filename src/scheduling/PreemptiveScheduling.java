@@ -59,7 +59,7 @@ public class PreemptiveScheduling {
         do {
             do {
                 System.out.println("Preemptive Scheduling Algorithms");
-                System.out.println("[A] Shortest Job First (SJF)");
+                System.out.println("[A] Shortest Remaining Time First (SRTF)");
                 System.out.println("[B] Preemptive Priority (P-Prio)");
                 System.out.println("[C] Exit");
                 System.out.print("Compute for: ");
@@ -69,7 +69,7 @@ public class PreemptiveScheduling {
                 System.out.println("---------------------------------------------------------------------------------------");
                 switch (chosenAlgo) {
                     case 'A':
-                        System.out.println("Shortest Job First (SJF)");
+                        System.out.println("Shortest Remaining Time First (SRTF)");
                         break;
                     case 'B':
                         System.out.println("Preemptive Priority (P-Prio)");
@@ -287,13 +287,18 @@ public class PreemptiveScheduling {
             rt[i] = proc[i].bt;
         }
 
-        int complete = 0, t = 0, minm = Integer.MAX_VALUE;
+        int complete = 0, t = 0, minm = Integer.MAX_VALUE, changed = 0;
         int shortest = 0, finish_time;
         boolean check = false;
+        
+        //arrage process ids ascending according to arrival time
+        ArrayList<Integer> listOfPassingIDs = new ArrayList<>();
 
         // Process until all processes gets completed
         while (complete != n) {
-
+            int copyOfPrevID = 0;
+            
+            
             // Find process with minimum remaining time among the processes that arrives till the current time
             for (int j = 0; j < n; j++) {
                 if ((proc[j].art <= t)
@@ -303,7 +308,9 @@ public class PreemptiveScheduling {
                     check = true;
                 }
             }
-
+            
+            
+            
             if (check == false) {
                 t++;
                 continue;
@@ -311,11 +318,10 @@ public class PreemptiveScheduling {
 
             // Reduce remaining time by one
             rt[shortest]--;
+            
             if(proc[shortest].art == t){
                 
-                //completionTimesOutput.add(t);
                 if (proc[shortest].bt != 0){
-                    ganttOutput.add(proc[shortest].pid);
                     completionTimesOutput.add(t);
                 }
             }
@@ -335,14 +341,10 @@ public class PreemptiveScheduling {
 
                 // Find finish time of current process
                 finish_time = t + 1;
-                if (completionTimesOutput.get(ganttOutput.size() - 1) != finish_time){
+                if (completionTimesOutput.get(completionTimesOutput.size() - 1) != finish_time){
                     completionTimesOutput.add(finish_time);
                 } 
                 
-                if (ganttOutput.get(ganttOutput.size() - 1) != proc[shortest].pid) {
-                    ganttOutput.add(proc[shortest].pid);
-                }
-
                 // Calculate waiting time
                 wt[shortest] = finish_time
                         - proc[shortest].bt
@@ -354,6 +356,27 @@ public class PreemptiveScheduling {
             }
             // Increment time
             t++;
+            
+            //System.out.println(proc[shortest].pid);
+            
+            copyOfPrevID = proc[shortest].pid;
+            listOfPassingIDs.add(copyOfPrevID);
+            
+        }
+        
+        ArrayList<Integer> newProcessQ = new ArrayList<>();
+        newProcessQ.add(listOfPassingIDs.get(0));
+        int j = 0;
+        
+        for(int i = 0 ; i < listOfPassingIDs.size() - 1 ; i++){
+            if(newProcessQ.get(j) != listOfPassingIDs.get(i + 1)){
+                newProcessQ.add(listOfPassingIDs.get(i + 1));
+                j++;
+            }
+        }
+        
+        for(int i = 0; i < newProcessQ.size(); i++){
+            ganttOutput.add(newProcessQ.get(i));
         }
         
     }
@@ -417,7 +440,8 @@ public class PreemptiveScheduling {
         for (int j = 0; j < cleanCompletionTimesOutput.size(); j++) {
             System.out.print("\t" + cleanCompletionTimesOutput.get(j));
         }
-
+        
+        
         System.out.println("");
 
         System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
