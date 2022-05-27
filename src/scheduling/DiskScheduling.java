@@ -85,19 +85,19 @@ public class DiskScheduling {
         seek_sequence[seek_sequence.length - 1] = head;
 
         double seek_time = (double) seek_count / (seek_sequence.length - 1);
-        
-         System.out.println(" ");
+
+        System.out.println(" ");
         System.out.println("Total head movement: " + seek_count);
         System.out.println("Average Seek Time: " + seek_time);
 
         System.out.println("_______________________________________________________________________________________");
         System.out.print("Seek Sequence: [START] →");
-         for (int i = 0; i < seek_sequence.length; i++) {
+        for (int i = 0; i < seek_sequence.length; i++) {
             System.out.print(" " + seek_sequence[i] + " →");
         }
         System.out.println(" [END]");
         System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
-  
+
     }
 
 //==============================================================================
@@ -132,7 +132,7 @@ public class DiskScheduling {
         }
         System.out.println(" [END]");
         System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
-        
+
     }
 
 //==============================================================================
@@ -320,7 +320,7 @@ public class DiskScheduling {
 
 // Driver code
     public static void main(String[] args) {
-        
+
         char chosenAlgo;
         char inputAlgo;
         char chooseContinue;
@@ -337,34 +337,49 @@ public class DiskScheduling {
                 System.out.println("[C] Circular Scan (CSCAN)");
                 System.out.println("[D] Circular Look (CLOOK)");
                 System.out.println("[E] Exit");
-                
-                do{
+
+                do {
                     System.out.print("Compute for: ");
                     inputAlgo = sc.next().charAt(0);
                     chosenAlgo = Character.toUpperCase(inputAlgo);
-                    
-                    if(chosenAlgo != 'A' && chosenAlgo != 'B' && chosenAlgo != 'C' && chosenAlgo != 'D' && chosenAlgo != 'E'){
-                         System.out.println("Invalid input. Please select a valid input from the example above.");
+
+                    if (chosenAlgo != 'A' && chosenAlgo != 'B' && chosenAlgo != 'C' && chosenAlgo != 'D' && chosenAlgo != 'E') {
+                        System.out.println("Invalid input. Please select a valid input from the example above.");
                     }
-                  } while(chosenAlgo != 'A' && chosenAlgo != 'B' && chosenAlgo != 'C' && chosenAlgo != 'D' && chosenAlgo != 'E');
-                    
-                
+                } while (chosenAlgo != 'A' && chosenAlgo != 'B' && chosenAlgo != 'C' && chosenAlgo != 'D' && chosenAlgo != 'E');
+
                 if (chosenAlgo == 'E') {
                     System.out.println("End of program.");
                     break;
                 }
+                System.out.println("---------------------------------------------------------------------------------------");
+                switch (chosenAlgo) {
+                    case 'A':
+                        System.out.println("First Come First Serve");
+                        break;
+                    case 'B':
+                        System.out.println("Shortest Seek Time First");
+                        break;
+                    case 'C':
+                        System.out.println("Circular Scan");
+                        break;
+                    case 'D':
+                        System.out.println("Circular Look");
+                        break;
+                }
+
                 System.out.print("Input Current Position: ");
                 int pos = sc.nextInt();
 
-                do{
+                do {
                     System.out.print("Input Track Size: ");
                     tsize = sc.nextInt();
-                    
-                    if (tsize < pos){
-                            System.out.println("Track size must not be smaller than current head position.");
+
+                    if (tsize < pos) {
+                        System.out.println("Track size must not be smaller than current head position.");
                     }
-                }while (tsize < pos);
-                
+                } while (tsize < pos);
+
                 do {
                     System.out.print("Input no. of processes [2-9]: ");
                     size = sc.nextInt();
@@ -376,14 +391,14 @@ public class DiskScheduling {
 
                 int arr[] = new int[size];
                 for (int i = 0; i < size; i++) {
-                    do{
-                    System.out.print("Location" + " " + (i + 1) + ": ");
-                    arr[i] = sc.nextInt();
-                        
-                        if(arr[i] > tsize){
+                    do {
+                        System.out.print("Location" + " " + (i + 1) + ": ");
+                        arr[i] = sc.nextInt();
+
+                        if (arr[i] > tsize) {
                             System.out.println("Process location must not be greater than the track size.");
                         }
-                    }while(arr[i] > tsize);
+                    } while (arr[i] > tsize);
                 }
 
                 //Redirects to methods for chosen algorithms
