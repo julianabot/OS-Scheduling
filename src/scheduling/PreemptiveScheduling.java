@@ -129,35 +129,20 @@ public class PreemptiveScheduling {
                 int priority[] = new int[processNum + 1];
                 int x[] = new int[processNum];
 
-                //sort array and process id by arrival time
-                int sortedProcessID[] = Arrays.copyOf(processID, processNum);
+                //sort array by arrival time
                 int sortedArrivalTime[] = Arrays.copyOf(arrivalTimePPrio, processNum);
-                int sortedPriority[] = Arrays.copyOf(priority, processNum);
-                int sortedBurstTime[] = Arrays.copyOf(burstTimePPrio, processNum);
                 //sorted burst time at the top
                 int tempArrival;
-                int tempID;
-                int tempBurst;
-                int tempPrio;
 
                 //sorts the input elements according to arrival time
                 for (int i = 0; i < processNum; i++) {
                     for (int k = i + 1; k < sortedArrivalTime.length; k++) {
                         if (sortedArrivalTime[i] > sortedArrivalTime[k]) {      //swap elements if not in order
                             tempArrival = sortedArrivalTime[i];
-                            tempID = sortedProcessID[i];
-                            tempBurst = sortedBurstTime[i];
-                            tempPrio = sortedPriority[i];
 
                             sortedArrivalTime[i] = sortedArrivalTime[k];
-                            sortedProcessID[i] = sortedProcessID[k];
-                            sortedBurstTime[i] = sortedBurstTime[k];
-                            sortedPriority[i] = sortedPriority[k];
 
                             sortedArrivalTime[k] = tempArrival;
-                            sortedProcessID[k] = tempID;
-                            sortedBurstTime[k] = tempBurst;
-                            sortedPriority[k] = tempPrio;
                         }
                     }
                 }
@@ -206,8 +191,6 @@ public class PreemptiveScheduling {
                     //creates a array lists used by the Gantt Chart
                     ArrayList<Integer> completionTimesOutput = new ArrayList<>();
                     ArrayList<Integer> ganttOutput = new ArrayList<>();
-
-
 
                     for (time = sortedArrivalTime[0]; count != processNum; time++) {
                         smallest = processNum;
@@ -287,6 +270,9 @@ public class PreemptiveScheduling {
             if (chooseContinue != 'Y' && chooseContinue != 'N') {
                 System.out.println("Invalid input. Program will now be terminated");
             }
+            
+            
+            
         } while (chooseContinue == 'Y');
 
     }
@@ -435,6 +421,8 @@ public class PreemptiveScheduling {
         System.out.println("");
 
         System.out.println("¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯");
+        
+        
         return;
     }
     
